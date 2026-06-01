@@ -1,0 +1,1702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chaolv · Your Gateway to the Chinese Travel Market</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Inter:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a1a12;
+    --bg-alt: #0d1f17;
+    --bg-card: #11271d;
+    --bg-card-hover: #163227;
+    --gold: #c8a45c;
+    --gold-light: #d4b76e;
+    --gold-dark: #a6843c;
+    --text-primary: #f0ede8;
+    --text-secondary: #a09b95;
+    --text-muted: #6b6560;
+    --border: #2a2a2a;
+    --border-light: #333333;
+    --accent: #c8a45c;
+    --white: #ffffff;
+    --section-padding: 120px 0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ── TYPOGRAPHY ── */
+  .serif { font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif; }
+  .sans { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+
+  /* ── NAV ── */
+  .nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    background: rgba(10,26,18,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    transition: all 0.3s;
+  }
+  .nav-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 3px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .nav-logo-dot {
+    width: 6px; height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+  }
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    align-items: center;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    transition: color 0.3s;
+    position: relative;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 1px;
+    background: var(--gold);
+    transition: width 0.3s;
+  }
+  .nav-links a:hover::after { width: 100%; }
+  .nav-cta {
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 10px 24px;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .nav-cta:hover { background: var(--gold); color: var(--bg); }
+  .mobile-toggle {
+    display: none;
+    background: none; border: none;
+    color: var(--text-primary);
+    font-size: 24px;
+    cursor: pointer;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    padding: 120px 40px 80px;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(10,26,18,0.92) 0%, rgba(10,26,18,0.75) 50%, rgba(10,26,18,0.92) 100%),
+      url('https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=1920&q=80') center/cover no-repeat;
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid rgba(200,164,92,0.3);
+    padding: 8px 20px;
+    border-radius: 100px;
+    margin-bottom: 36px;
+    position: relative;
+  }
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(42px, 7vw, 80px);
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--text-primary);
+    margin-bottom: 24px;
+    position: relative;
+    letter-spacing: -1px;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .hero-subtitle {
+    font-size: clamp(15px, 2vw, 18px);
+    font-weight: 300;
+    color: var(--text-secondary);
+    max-width: 640px;
+    margin: 0 auto 48px;
+    position: relative;
+    line-height: 1.8;
+  }
+  .hero-divider {
+    width: 80px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 0 auto 48px;
+  }
+  .hero-cta-group {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+  }
+  .btn-primary {
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    padding: 16px 36px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--border-light);
+    padding: 16px 36px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+  }
+  .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+  .hero-scroll {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .hero-scroll span {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .hero-scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    padding: var(--section-padding);
+    position: relative;
+  }
+  .section-alt { background: var(--bg-alt); }
+  .section-exclusive {
+    background: var(--bg-alt);
+    position: relative;
+  }
+  .section-exclusive::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(13,31,23,0.95) 0%, rgba(13,31,23,0.65) 50%, rgba(13,31,23,0.95) 100%),
+      url('https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?w=1920&q=80') center/cover no-repeat;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .section-exclusive > * { position: relative; z-index: 1; }
+  .container {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(30px, 4.5vw, 48px);
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+  }
+  .section-desc {
+    font-size: 16px;
+    color: var(--text-secondary);
+    max-width: 640px;
+    line-height: 1.8;
+    margin-bottom: 60px;
+  }
+
+  /* ── HERO VALUE GRID ── */
+  .hero-value-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin: 0 auto 28px;
+    max-width: 780px;
+  }
+  .hero-value-item {
+    text-align: center;
+    padding: 20px 8px;
+    border-right: 1px solid rgba(255,255,255,0.06);
+  }
+  .hero-value-item:last-child { border-right: none; }
+  .hero-value-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-weight: 300;
+    color: var(--gold);
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+  .hero-value-num small { font-size: 13px; opacity: 0.6; }
+  .hero-value-label {
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    text-transform: uppercase;
+  }
+
+  /* ── PAIN POINTS ── */
+  .pain-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .pain-item {
+    background: var(--bg-card);
+    padding: 40px 32px;
+    transition: background 0.3s;
+  }
+  .pain-item:hover { background: var(--bg-card-hover); }
+  .pain-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px;
+    font-weight: 300;
+    color: rgba(200,164,92,0.15);
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  .pain-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+    letter-spacing: 0.3px;
+  }
+  .pain-text {
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+  }
+
+  /* ── EXCLUSIVE BANNER ── */
+  .exclusive-banner {
+    background: linear-gradient(135deg, rgba(200,164,92,0.08), rgba(200,164,92,0.02));
+    border: 1px solid rgba(200,164,92,0.15);
+    border-radius: 2px;
+    padding: 48px;
+    text-align: center;
+    margin: 60px 0;
+  }
+  .exclusive-banner .icon {
+    font-size: 36px;
+    margin-bottom: 16px;
+  }
+  .exclusive-banner .title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--gold);
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+  }
+  .exclusive-banner .text {
+    font-size: 15px;
+    color: var(--text-secondary);
+    max-width: 560px;
+    margin: 0 auto;
+    line-height: 1.8;
+  }
+
+  /* ── STATS ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 40px;
+  }
+  .stat-item {
+    background: var(--bg-card);
+    padding: 48px 28px;
+    text-align: center;
+    transition: background 0.3s;
+  }
+  .stat-item:hover { background: var(--bg-card-hover); }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52px;
+    font-weight: 300;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .stat-unit { font-size: 20px; opacity: 0.6; }
+  .stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* ── SERVICES ── */
+  .service-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .service-card {
+    background: var(--bg-card);
+    padding: 40px 32px;
+    transition: background 0.3s;
+    position: relative;
+  }
+  .service-card:hover { background: var(--bg-card-hover); }
+  .service-card.full-width { grid-column: 1 / -1; }
+  .service-icon {
+    font-size: 28px;
+    margin-bottom: 20px;
+    opacity: 0.8;
+  }
+  .service-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+  }
+  .service-badge {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid rgba(200,164,92,0.3);
+    padding: 4px 10px;
+    border-radius: 2px;
+    margin-left: 10px;
+    vertical-align: middle;
+  }
+  .service-text {
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+  }
+
+  /* ── REGISTRATION STEPS ── */
+  .steps-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .step-option {
+    background: var(--bg-card);
+    padding: 40px 32px;
+  }
+  .step-option.featured {
+    background: linear-gradient(180deg, rgba(200,164,92,0.06), var(--bg-card));
+    border-left: 2px solid var(--gold);
+  }
+  .step-label {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid rgba(200,164,92,0.3);
+    padding: 5px 12px;
+    margin-bottom: 16px;
+  }
+  .step-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+  .step-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    line-height: 1.7;
+  }
+  .step-list {
+    list-style: none;
+    counter-reset: step;
+  }
+  .step-list li {
+    counter-increment: step;
+    display: flex;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    align-items: flex-start;
+  }
+  .step-list li:last-child { border-bottom: none; }
+  .step-list li::before {
+    content: '0' counter(step);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    color: var(--gold);
+    font-weight: 500;
+    flex-shrink: 0;
+    min-width: 28px;
+    opacity: 0.7;
+  }
+  .step-list li strong { color: var(--text-primary); font-weight: 600; }
+
+  /* ── CASE STUDIES ── */
+  .case-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .case-card {
+    background: var(--bg-card);
+    overflow: hidden;
+    transition: all 0.3s;
+    cursor: pointer;
+    position: relative;
+  }
+  .case-card:hover { background: var(--bg-card-hover); }
+  .case-card:hover .case-img img { transform: scale(1.05); }
+  .case-img {
+    width: 100%;
+    aspect-ratio: 16/10;
+    overflow: hidden;
+    background: var(--bg-alt);
+    position: relative;
+  }
+  .case-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+  .case-img .placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    opacity: 0.3;
+  }
+  .case-body {
+    padding: 28px 24px;
+  }
+  .case-tag {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+  .case-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+  }
+  .case-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+  .case-hidden {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  /* ── PRICING ── */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .pricing-card {
+    background: var(--bg-card);
+    padding: 48px 32px;
+    text-align: center;
+    transition: all 0.3s;
+    position: relative;
+  }
+  .pricing-card:hover { background: var(--bg-card-hover); }
+  .pricing-card.featured {
+    background: linear-gradient(180deg, rgba(200,164,92,0.08), var(--bg-card));
+    border: 1px solid var(--gold);
+    margin: -1px;
+    z-index: 1;
+  }
+  .pricing-badge {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--gold);
+    color: var(--bg);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 6px 18px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .pricing-name {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+  .pricing-price {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 56px;
+    font-weight: 300;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .pricing-currency {
+    font-size: 24px;
+    vertical-align: super;
+    margin-right: 2px;
+  }
+  .pricing-rmb {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-muted);
+    vertical-align: middle;
+    letter-spacing: 1px;
+  }
+  .pricing-period {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 28px;
+  }
+  .pricing-saving {
+    font-size: 13px;
+    color: var(--gold-light);
+    font-weight: 500;
+    margin-bottom: 24px;
+  }
+  .pricing-features {
+    list-style: none;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .pricing-features li {
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.6;
+  }
+  .pricing-features li::before {
+    content: '';
+    width: 4px; height: 4px;
+    background: var(--gold);
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 8px;
+  }
+  .pricing-cta {
+    display: inline-block;
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--border-light);
+    color: var(--text-primary);
+    padding: 14px;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+  }
+  .pricing-cta:hover { border-color: var(--gold); color: var(--gold); }
+  .pricing-card.featured .pricing-cta {
+    background: var(--gold);
+    color: var(--bg);
+    border-color: var(--gold);
+    font-weight: 600;
+  }
+  .pricing-card.featured .pricing-cta:hover { background: var(--gold-light); }
+  .pricing-note {
+    text-align: center;
+    margin-top: 32px;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.8;
+  }
+
+  /* ── COMPARISON TABLE ── */
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0 0;
+  }
+  .comparison-table th {
+    padding: 18px 24px;
+    text-align: left;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.4s;
+    user-select: none;
+  }
+  .comparison-table th:first-child {
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    width: 45%;
+  }
+  .comparison-table th:last-child {
+    color: var(--gold);
+    border-bottom: 1px solid var(--gold);
+  }
+  .comparison-table td {
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 13.5px;
+    line-height: 1.7;
+    transition: all 0.4s;
+  }
+  .comparison-table td:first-child { color: var(--text-muted); }
+  .comparison-table td:last-child { color: var(--text-secondary); }
+  .comparison-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* Active state: left column highlighted */
+  .comparison-table.active-left td:first-child { color: var(--text-primary); }
+  .comparison-table.active-left td:last-child { color: var(--text-muted); }
+  .comparison-table.active-left th:first-child { color: var(--gold); border-bottom-color: var(--gold); }
+  .comparison-table.active-left th:last-child { color: var(--text-muted); border-bottom-color: var(--border); }
+
+  /* Active state: right column highlighted */
+  .comparison-table.active-right td:first-child { color: var(--text-muted); }
+  .comparison-table.active-right td:last-child { color: var(--text-primary); }
+  .comparison-table.active-right th:first-child { color: var(--text-muted); border-bottom-color: var(--border); }
+  .comparison-table.active-right th:last-child { color: var(--gold); border-bottom-color: var(--gold); }
+
+  /* ── ROI ── */
+  .roi-box {
+    background: linear-gradient(135deg, rgba(200,164,92,0.1), rgba(200,164,92,0.02));
+    border: 1px solid rgba(200,164,92,0.15);
+    padding: 48px;
+    text-align: center;
+    margin-top: 40px;
+  }
+  .roi-box .roi-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--gold);
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+  }
+  .roi-box .roi-main {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.9;
+    max-width: 640px;
+    margin: 0 auto 12px;
+  }
+  .roi-box .roi-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  /* ── TESTIMONIAL ── */
+  .testimonial {
+    text-align: center;
+    padding: 80px 0;
+  }
+  .testimonial-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(22px, 3.5vw, 32px);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--text-primary);
+    max-width: 720px;
+    margin: 0 auto 24px;
+    line-height: 1.5;
+    position: relative;
+  }
+  .testimonial-quote::before {
+    content: '"';
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 120px;
+    color: rgba(200,164,92,0.08);
+    position: absolute;
+    top: -40px;
+    left: -40px;
+    line-height: 1;
+  }
+  .testimonial-author {
+    font-size: 13px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* ── CTA SECTION ── */
+  .cta-section {
+    background:
+      linear-gradient(135deg, rgba(10,26,18,0.92) 0%, rgba(10,26,18,0.78) 100%),
+      url('https://images.unsplash.com/photo-1537531383496-f4749b88b7fa?w=1920&q=80') center/cover no-repeat;
+    border-top: 1px solid rgba(200,164,92,0.1);
+    border-bottom: 1px solid rgba(200,164,92,0.1);
+    padding: 100px 0;
+    text-align: center;
+    position: relative;
+  }
+  .cta-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    letter-spacing: 0.5px;
+  }
+  .cta-subtitle {
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin-bottom: 40px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.8;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: var(--bg-alt);
+    border-top: 1px solid var(--border);
+    padding: 60px 40px 32px;
+  }
+  .footer-grid {
+    max-width: 1140px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 48px;
+    margin-bottom: 48px;
+  }
+  .footer-brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 3px;
+    margin-bottom: 16px;
+  }
+  .footer-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.8;
+    max-width: 280px;
+  }
+  .footer-col h4 {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+  .footer-col a {
+    display: block;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 13px;
+    margin-bottom: 10px;
+    transition: color 0.3s;
+  }
+  .footer-col a:hover { color: var(--gold); }
+  .footer-bottom {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* ── LIGHTBOX ── */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.95);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .lightbox.active { opacity: 1; pointer-events: all; }
+  .lightbox img {
+    max-width: 90vw;
+    max-height: 85vh;
+    object-fit: contain;
+  }
+  .lightbox-close {
+    position: absolute;
+    top: 24px;
+    right: 32px;
+    color: var(--text-secondary);
+    font-size: 32px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    transition: color 0.3s;
+  }
+  .lightbox-close:hover { color: var(--white); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1024px) {
+    .pain-grid { grid-template-columns: repeat(2, 1fr); }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .case-grid { grid-template-columns: repeat(2, 1fr); }
+    .service-grid { grid-template-columns: 1fr; }
+    .steps-container { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .mobile-toggle { display: block; }
+    .pain-grid { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .case-grid { grid-template-columns: 1fr; }
+    .hero-value-grid { grid-template-columns: repeat(2, 1fr); gap: 12px 0; }
+    .container { padding: 0 24px; }
+    .section { padding: 80px 0; }
+    .hero-title { font-size: clamp(32px, 8vw, 52px); }
+    .nav-inner { padding: 0 24px; }
+  }
+  @media (max-width: 480px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .hero { padding: 100px 20px 60px; }
+    .hero-value-grid { grid-template-columns: repeat(2, 1fr); gap: 8px 0; }
+    .footer { padding: 40px 24px 24px; }
+  }
+
+  /* ── MOBILE NAV ── */
+  .mobile-nav {
+    position: fixed;
+    inset: 0;
+    background: rgba(10,10,10,0.98);
+    backdrop-filter: blur(20px);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .mobile-nav.active { opacity: 1; pointer-events: all; }
+  .mobile-nav a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 18px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+  .mobile-nav a:hover { color: var(--gold); }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">CHAOLV <span class="nav-logo-dot"></span></a>
+    <ul class="nav-links">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#how-it-works">How It Works</a></li>
+      <li><a href="#cases">Case Studies</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#contact" class="nav-cta">Get Started</a></li>
+    </ul>
+    <button class="mobile-toggle" onclick="toggleMobileNav()">☰</button>
+  </div>
+</nav>
+
+<div class="mobile-nav" id="mobileNav">
+  <a href="#services" onclick="toggleMobileNav()">Services</a>
+  <a href="#how-it-works" onclick="toggleMobileNav()">How It Works</a>
+  <a href="#cases" onclick="toggleMobileNav()">Case Studies</a>
+  <a href="#pricing" onclick="toggleMobileNav()">Pricing</a>
+  <a href="#contact" onclick="toggleMobileNav()">Get Started</a>
+</div>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-badge">🌏 One Country · One Exclusive Partner</div>
+  <h1 class="hero-title">
+    Instant Access to<br>
+    <em>China's Travel Market</em>
+  </h1>
+  <p class="hero-subtitle">
+    We partner with <strong style="color:var(--gold);">only one travel operator per country</strong> — when you work with Chaolv, you own the market. Start generating qualified Chinese leads within <strong style="color:var(--gold);">30 days</strong>.
+  </p>
+
+  <!-- Immediate Value Props -->
+  <div class="hero-value-grid">
+    <div class="hero-value-item">
+      <div class="hero-value-num">¥300K</div>
+      <div class="hero-value-label">Save / Year<br>vs. Hiring Staff</div>
+    </div>
+    <div class="hero-value-item">
+      <div class="hero-value-num">30<small style="font-size:14px"> Days</small></div>
+      <div class="hero-value-label">To Go Live<br>WeChat + Content</div>
+    </div>
+    <div class="hero-value-item">
+      <div class="hero-value-num">3,000<small style="font-size:14px">+</small></div>
+      <div class="hero-value-label">Active WeChat<br>Followers Ready</div>
+    </div>
+    <div class="hero-value-item">
+      <div class="hero-value-num">0</div>
+      <div class="hero-value-label">Staff to Hire<br>Full Outsourced</div>
+    </div>
+  </div>
+
+  <div class="hero-divider"></div>
+  <div class="hero-cta-group">
+    <a href="#pricing" class="btn-primary">Explore Partnership</a>
+    <a href="#how-it-works" class="btn-secondary">How It Works</a>
+  </div>
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="hero-scroll-line"></div>
+  </div>
+</section>
+
+<!-- ── PAIN POINTS ── -->
+<section class="section" id="challenge">
+  <div class="container">
+    <div class="section-label">The Opportunity</div>
+    <h2 class="section-title">Making Your Business in China Simple</h2>
+    <p class="section-desc">
+      China's outbound travel market is massive — over 130 million travelers per year. With Chaolv as your on-the-ground partner, the platforms, the content, and the leads all become simple and accessible.
+    </p>
+    <div class="pain-grid">
+      <div class="pain-item">
+        <div class="pain-num">01</div>
+        <div class="pain-title">WeChat Ecosystem — Done For You</div>
+        <div class="pain-text">WeChat Official Accounts, Xiaohongshu, and Douyin — the platforms where Chinese travelers live — are inaccessible to foreign entities. We handle registration, verification, and daily operations. Your brand goes live in 30 days.</div>
+      </div>
+      <div class="pain-item">
+        <div class="pain-num">02</div>
+        <div class="pain-title">Zero Local Staff Required</div>
+        <div class="pain-text">Hiring a single marketing professional in China costs ¥300,000+/year plus social insurance and compliance overhead. With Chaolv, one annual partnership fee replaces an entire team — zero hiring, zero HR, zero headaches.</div>
+      </div>
+      <div class="pain-item">
+        <div class="pain-num">03</div>
+        <div class="pain-title">Chinese Content That Converts</div>
+        <div class="pain-text">High-end Chinese travelers follow a distinct decision journey. We don't just translate — we craft culturally resonant narratives, itineraries, and proposals tailored to Chinese preferences. Every piece of content is built to drive engagement and bookings.</div>
+      </div>
+      <div class="pain-item">
+        <div class="pain-num">04</div>
+        <div class="pain-title">Trade Shows — We Represent You</div>
+        <div class="pain-text">Exhibitions in China (COTTM, ITB China, CITM) require local entity credentials and culturally appropriate booth design. We attend under your brand — you only reimburse actual travel and material costs, with full transparency.</div>
+      </div>
+      <div class="pain-item">
+        <div class="pain-num">05</div>
+        <div class="pain-title">Instant Trust & Credibility</div>
+        <div class="pain-text">Building market trust as an unknown foreign brand typically takes 2–3 years. With Chaolv's established reputation serving 300+ high-net-worth Chinese families, your brand starts with credibility already in place.</div>
+      </div>
+      <div class="pain-item">
+        <div class="pain-num">06</div>
+        <div class="pain-title">Regulatory Compliance — Covered</div>
+        <div class="pain-text">WeChat advertising, payment integration, event registration — all require a verified Chinese business entity. As a licensed travel agency, we handle every compliance requirement so you never have to think about it.</div>
+      </div>
+    </div>
+
+    <div class="exclusive-banner">
+      <div class="icon">🤝</div>
+      <div class="title">Your Trusted, Reliable Partner in China</div>
+      <div class="text">Chaolv is a licensed Chinese travel agency — a <strong style="color:var(--gold);">dependable, on-the-ground partner</strong> you can count on. We bring deep WeChat ecosystem expertise, a track record of serving 300+ high-net-worth families, and a team recruited from China's leading travel companies. <strong style="color:var(--gold);">We deliver on every promise.</strong></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── EXCLUSIVITY ── -->
+<section class="section-exclusive" id="exclusivity">
+  <div class="container">
+    <div class="section-label">Our Promise</div>
+    <h2 class="section-title">One Country, One Partner</h2>
+    <p class="section-desc">
+      We believe in deep, focused partnerships — never diluted attention. For each destination country, we work exclusively with <strong style="color: var(--gold);">one travel operator</strong>. Your brand receives our full resources, undivided focus, and total market protection.
+    </p>
+
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-num">1<span class="stat-unit">:1</span></div>
+        <div class="stat-label">Exclusive Partner<br>per Country</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">3000<span class="stat-unit">+</span></div>
+        <div class="stat-label">Active WeChat Official<br>Account Followers</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">300<span class="stat-unit">+</span></div>
+        <div class="stat-label">High-Net-Worth<br>Families Served</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">30<span class="stat-unit">%</span></div>
+        <div class="stat-label">Clients via WeChat<br>Content Marketing</div>
+      </div>
+    </div>
+
+    <div class="exclusive-banner" style="margin-top: 40px; background: rgba(200,164,92,0.06); border-color: rgba(200,164,92,0.25);">
+      <div class="icon" style="font-size:36px;">🌏</div>
+      <div class="title" style="font-size:22px; letter-spacing:1px;">One Country, One Partner — Guaranteed</div>
+      <div class="text" style="max-width:600px;">We work with <strong style="color:var(--gold);">only one travel operator per country</strong>. Once your country's slot is claimed, we will not partner with any competitor from that market. Secure your exclusive representation <strong style="color:var(--gold);">today</strong>. <span style="color:var(--gold); font-weight:600;">First come, first served.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SERVICES ── -->
+<section class="section" id="services">
+  <div class="container">
+    <div class="section-label">What We Do</div>
+    <h2 class="section-title">Full-Service China Market Representation</h2>
+    <p class="section-desc">
+      From WeChat account registration to daily content, trade show presence to lead forwarding — we are your complete China operating partner.
+    </p>
+
+    <div class="service-grid">
+      <div class="service-card">
+        <div class="service-icon">📱</div>
+        <div class="service-name">WeChat Official Account<span class="service-badge">Core Service</span></div>
+        <div class="service-text">We register and operate a dedicated WeChat Official Account for your destination — the first and only systematic Chinese-language promotional platform for your country. 52 premium articles per year covering local culture, travel guides, signature routes, and on-the-ground services. Full management: follower engagement, comment replies, analytics, and content strategy.</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">🎪</div>
+        <div class="service-name">Trade Show Representation<span class="service-badge">Exclusive Identity</span></div>
+        <div class="service-text">We attend major Chinese travel exhibitions (COTTM, ITB China, CITM) exclusively under your brand. Professional booth materials designed by our creative team. All material and travel costs reimbursed at actual cost — completely transparent.</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">🤝</div>
+        <div class="service-name">Direct Lead Forwarding<span class="service-badge">Zero Commission</span></div>
+        <div class="service-text">Every customer inquiry about your destination is forwarded directly to you. No intermediary fees, no commissions. Our revenue comes from the partnership — never from your client transactions. Interests fully aligned.</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">🇨🇳</div>
+        <div class="service-name">Premium Chinese Content & Itinerary Design<span class="service-badge">High-End Localization</span></div>
+        <div class="service-text">We craft <strong>itineraries designed for Chinese travelers</strong> — not translated Western routes, but journeys built around Chinese preferences: pacing, dining, photo opportunities, shopping, and cultural storytelling. We also produce <strong>premium Chinese-language documents</strong> — client quotations, multi-day itineraries, and professional proposals — all written in authentic, locally-adapted Chinese for high-net-worth clients. Every piece is formatted to the standards of China's leading travel agencies.</div>
+      </div>
+      <div class="service-card full-width">
+        <div class="service-icon">🛡️</div>
+        <div class="service-name">Complete Peace of Mind</div>
+        <div class="service-text">No staff to hire. No social insurance. No travel costs. No regulatory headaches. Our bilingual team handles everything — you get a complete China marketing operation with zero overhead.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section class="section section-alt" id="how-it-works" style="background: linear-gradient(180deg, rgba(13,31,23,0.95) 0%, rgba(13,31,23,0.78) 100%), url('https://images.unsplash.com/photo-1513593771513-7b58b6c4af38?w=1920&q=80') center/cover no-repeat;">
+  <div class="container">
+    <div class="section-label">Registration Process</div>
+    <h2 class="section-title">WeChat Official Account Setup</h2>
+    <p class="section-desc">
+      Setting up a WeChat Official Account as a foreign entity is complex. We manage the entire process — two clear pathways depending on your situation.
+    </p>
+
+    <div class="steps-container">
+      <div class="step-option featured">
+        <div class="step-label">Option 1 · Recommended</div>
+        <div class="step-title">You Have a Registered Company in China</div>
+        <div class="step-desc">Fastest path to full verification and feature access. Full ownership under your Chinese entity.</div>
+        <ol class="step-list">
+          <li><strong>Document Collection</strong><br>You provide business license, legal representative ID, corporate bank account, and certification documents.</li>
+          <li><strong>Registration & Verification</strong><br>We complete account registration and official WeChat verification, set up basic menus and functions.</li>
+          <li><strong>Permission Configuration</strong><br>We configure account access. Ownership remains with your company.</li>
+          <li><strong>Official Operation</strong><br>We deliver daily content, design, community interaction, and monthly data reports.</li>
+          <li><strong>Ongoing Support</strong><br>Regular content review, function adjustment, and annual certification renewal.</li>
+        </ol>
+      </div>
+
+      <div class="step-option">
+        <div class="step-label">Option 2</div>
+        <div class="step-title">No Chinese Company Yet</div>
+        <div class="step-desc">Two pathways available — standard overseas Service Account or quick-launch personal account.</div>
+        <ol class="step-list">
+          <li><strong>Standard: Register Overseas Service Account</strong><br>We collect your overseas company documents, contact person ID, and bank info. We submit and complete registration for the overseas corporate Service Account.</li>
+          <li><strong>Permission Setup</strong><br>We set up operation permissions. The account belongs to your overseas travel agency.</li>
+          <li><strong>Temporary: Personal Account Quick Launch</strong><br>We register a personal account for immediate content release and fan engagement during the transition.</li>
+          <li><strong>Migration When Ready</strong><br>Once you establish a Chinese company, we migrate all content and followers to your new corporate account.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CASE STUDIES ── -->
+<section class="section" id="cases">
+  <div class="container">
+    <div class="section-label">Case Studies</div>
+    <h2 class="section-title">Proven Results</h2>
+    <p class="section-desc">
+      See how we've helped travel brands establish their presence and generate qualified leads in the Chinese market.
+    </p>
+
+    <div class="case-grid" id="caseGrid">
+      <!-- Cases loaded dynamically from localStorage -->
+    </div>
+  </div>
+</section>
+
+<!-- ── PRICING ── -->
+<section class="section section-alt" id="pricing">
+  <div class="container">
+    <div class="section-label">Partnership Plans</div>
+    <h2 class="section-title">Transparent Investment</h2>
+    <p class="section-desc">
+      Simple, straightforward pricing with no hidden fees. Our revenue comes from the partnership — never from your client transactions.
+    </p>
+
+    <div class="pricing-grid" id="pricingGrid">
+      <!-- Pricing loaded dynamically from localStorage -->
+    </div>
+
+    <p class="pricing-note" id="pricingNote">
+      <!-- Dynamic pricing note -->
+    </p>
+
+    <div class="roi-box">
+      <div class="roi-title">Return on Investment</div>
+      <div class="roi-main">
+        One year of partnership costs less than <strong style="color: var(--gold);">two months' salary</strong> for a single local hire in China. Even <strong style="color: var(--gold);">one booking</strong> from a high-end family (average spend $5,000–$30,000 USD) covers your entire annual fee.
+      </div>
+      <div class="roi-sub">Every subsequent booking is pure profit. The brand equity you build in the Chinese market carries strategic value far beyond the partnership fee.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── COMPARISON ── -->
+<section class="section" id="comparison">
+  <div class="container">
+    <div class="section-label">Why Chaolv</div>
+    <h2 class="section-title">Going It Alone vs. Partnering with Chaolv</h2>
+    <p class="section-desc">
+      The numbers speak for themselves. Going it alone costs far more — in money, time, and missed opportunities.
+    </p>
+
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Entering China Alone</th>
+          <th>Partnering with Chaolv</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Hire local marketing staff: ≥ ¥300,000/year total cost</td>
+          <td>No employees needed — zero staffing costs</td>
+        </tr>
+        <tr>
+          <td>Social insurance, benefits, compliance obligations</td>
+          <td>Zero social insurance or compliance burden</td>
+        </tr>
+        <tr>
+          <td>Founder/executive travel: flights + hotels + visas</td>
+          <td>No travel to China required from you</td>
+        </tr>
+        <tr>
+          <td>Cold-start content: 12–24 months to build followers</td>
+          <td>Instant access to our established high-end readership</td>
+        </tr>
+        <tr>
+          <td>Complex exhibition applications and booth design</td>
+          <td>Fully delegated to Chaolv — transparent cost reimbursement</td>
+        </tr>
+        <tr>
+          <td>Trust built through slow word-of-mouth accumulation</td>
+          <td>Leverage Chaolv's reputation from 300+ high-end families</td>
+        </tr>
+        <tr>
+          <td>Multiple channel partnerships dilute brand exposure</td>
+          <td>One country, one partner — exclusive channel access</td>
+        </tr>
+        <tr>
+          <td>Uncertain partner commitment and follow-through</td>
+          <td>A <strong style="color:var(--gold);">reliable, accountable partner</strong> — we deliver what we promise</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── TESTIMONIAL ── -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="testimonial">
+      <div class="testimonial-quote">We don't do traffic business. We do trust business.</div>
+      <div class="testimonial-author">— Chaolv, Your Reliable Partner in China</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="cta-section" id="contact">
+  <div class="container">
+    <h2 class="cta-title">Ready to Enter the Chinese Market?</h2>
+    <p class="cta-subtitle">
+      Each country gets only one partnership slot. Secure yours before someone else does.
+    </p>
+    <a href="chaolv_contact.html" class="btn-primary" style="font-size: 14px; padding: 18px 42px;">Start the Conversation</a>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">CHAOLV</div>
+      <p class="footer-desc">
+        A licensed Chinese travel agency and premium operating partner for international tour operators. One country, one partner — your exclusive gateway to China's travel market.
+      </p>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <a href="#services">WeChat Management</a>
+      <a href="#services">Trade Show Representation</a>
+      <a href="#services">Lead Forwarding</a>
+      <a href="#services">Chinese Localization</a>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="#exclusivity">About Us</a>
+      <a href="#cases">Case Studies</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <a href="#">WeChat: Elan-zhong</a>
+      <a href="#">Mobile: +86 186-2055-2833</a>
+      <a href="#">Guangzhou, China</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2026 Chaolv. All rights reserved.</span>
+    <span>Guangzhou International Trade Centre, Tianhe District</span>
+  </div>
+</footer>
+
+<!-- ── LIGHTBOX ── -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close">&times;</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<script>
+// ── DATA LOADING ──
+const DATA_KEY = 'CHAOLV_SITE_DATA';
+
+function getDefaultData() {
+  return {
+    pricing: [
+      {
+        id: 1,
+        name: 'Starter',
+        price: '18,000',
+        currency: '¥',
+        period: '/ Year',
+        saving: '',
+        featured: false,
+        badge: '',
+        features: [
+          'WeChat Official Account setup & management',
+          '52 high-quality articles per year',
+          'Trade show representation × 1 per year',
+          'Direct lead forwarding — zero commission',
+          'Full Chinese localization',
+          'One country, one partner exclusivity'
+        ],
+        ctaText: 'Get Started',
+        ctaLink: '#contact'
+      },
+      {
+        id: 2,
+        name: 'Premium',
+        price: '30,000',
+        currency: '¥',
+        period: '/ 2 Years',
+        saving: 'Save ¥6,000 · ¥15,000/year',
+        featured: true,
+        badge: 'Most Popular',
+        features: [
+          'All Starter services × 2 years',
+          'Priority resource scheduling',
+          'Deeper brand recognition through sustained content',
+          'Priority exhibition slot selection',
+          'Quarterly performance review calls',
+          'Ideal for operators committed to China market'
+        ],
+        ctaText: 'Choose Premium',
+        ctaLink: '#contact'
+      },
+      {
+        id: 3,
+        name: 'Enterprise',
+        price: '50,000',
+        currency: '¥',
+        period: '/ 2 Years',
+        saving: 'Enhanced partnership',
+        featured: false,
+        badge: '',
+        features: [
+          'All Premium services × 2 years',
+          '104 articles per year (2× frequency)',
+          'Xiaohongshu (RED) account operation',
+          'Trade show representation × 2 per year',
+          'Dedicated account manager',
+          'Monthly strategy calls & custom reports'
+        ],
+        ctaText: 'Contact Us',
+        ctaLink: '#contact'
+      }
+    ],
+    pricingNote: 'All fees exclude reimbursable trade show material and travel costs (settled at actual cost). Additional exhibitions: ¥1,000/person/day subsidy. Trade show representation is included for one exhibition per year; if no exhibition is attended, this benefit is forfeited with no refund. All terms subject to formal partnership agreement.',
+    cases: [
+      {
+        id: 1,
+        title: 'Southeast Asian DMC',
+        tag: 'Destination Management',
+        text: 'Helped a premier Southeast Asian DMC establish their WeChat presence from scratch. Within 12 months, generated 50+ qualified leads and 8 confirmed high-end family bookings. The WeChat account now serves as the go-to Chinese-language resource for their destination.',
+        image: '',
+        hidden: false
+      },
+      {
+        id: 2,
+        title: 'European Luxury Tour Operator',
+        tag: 'Luxury Travel',
+        text: 'Partnered with a European luxury tour operator to create culturally adapted content for the Chinese market. Our localized approach resulted in a 40% inquiry conversion rate, with average booking values exceeding $15,000 USD per family.',
+        image: '',
+        hidden: false
+      },
+      {
+        id: 3,
+        title: 'African Safari Specialist',
+        tag: 'Adventure Travel',
+        text: 'Represented an African safari operator at CITM Shanghai, generating 120+ qualified trade contacts in 3 days. Our follow-up WeChat content strategy converted 15% of these contacts into active booking inquiries within 6 months.',
+        image: '',
+        hidden: false
+      },
+      {
+        id: 4,
+        title: 'Japanese Cultural Experience Provider',
+        tag: 'Cultural Tourism',
+        text: 'Created a comprehensive WeChat content calendar featuring seasonal Japanese experiences. The account grew to 5,000+ followers in 8 months, with 30% of followers actively engaging with booking inquiries.',
+        image: '',
+        hidden: true
+      },
+      {
+        id: 5,
+        title: 'South American Adventure Travel',
+        tag: 'Adventure Travel',
+        text: 'Launched the first dedicated Chinese-language WeChat account for a South American destination. Within 6 months, established the account as the authoritative voice for Chinese travelers planning South American adventures.',
+        image: '',
+        hidden: true
+      }
+    ]
+  };
+}
+
+function loadData() {
+  const stored = localStorage.getItem(DATA_KEY);
+  if (stored) {
+    try {
+      return JSON.parse(stored);
+    } catch(e) {
+      console.error('Data parse error, using defaults');
+    }
+  }
+  return getDefaultData();
+}
+
+function saveData(data) {
+  localStorage.setItem(DATA_KEY, JSON.stringify(data));
+}
+
+// Initialize with defaults if no data exists
+if (!localStorage.getItem(DATA_KEY)) {
+  saveData(getDefaultData());
+}
+
+// ── RENDER ──
+function renderPricing() {
+  const data = loadData();
+  const grid = document.getElementById('pricingGrid');
+  const note = document.getElementById('pricingNote');
+
+  grid.innerHTML = data.pricing.map(p => `
+    <div class="pricing-card${p.featured ? ' featured' : ''}">
+      ${p.badge ? `<div class="pricing-badge">${p.badge}</div>` : ''}
+      <div class="pricing-name">${p.name}</div>
+      <div class="pricing-price"><span class="pricing-currency">${p.currency}</span>${p.price}<span class="pricing-rmb"> RMB</span></div>
+      <div class="pricing-period">${p.period}</div>
+      ${p.saving ? `<div class="pricing-saving">${p.saving}</div>` : '<div style="height: 41px;"></div>'}
+      <ul class="pricing-features">
+        ${p.features.map(f => `<li>${f}</li>`).join('')}
+      </ul>
+      <a href="${p.ctaLink}" class="pricing-cta">${p.ctaText}</a>
+    </div>
+  `).join('');
+
+  note.innerHTML = data.pricingNote;
+}
+
+function renderCases() {
+  const data = loadData();
+  const grid = document.getElementById('caseGrid');
+
+  const visibleCases = data.cases.filter(c => !c.hidden);
+  const hiddenCases = data.cases.filter(c => c.hidden);
+
+  grid.innerHTML = [
+    ...visibleCases.map(c => `
+      <div class="case-card" onclick="${c.image ? `openLightbox('${c.image}')` : ''}" style="${c.image ? '' : 'cursor: default;'}">
+        <div class="case-img">
+          ${c.image
+            ? `<img src="${c.image}" alt="${c.title}" loading="lazy">`
+            : `<div class="placeholder">📸</div>`
+          }
+        </div>
+        <div class="case-body">
+          <div class="case-tag">${c.tag}</div>
+          <div class="case-title">${c.title}</div>
+          <div class="case-text">${c.text}</div>
+        </div>
+      </div>
+    `),
+    ...hiddenCases.map(c => `
+      <div class="case-card case-hidden">
+        <div class="case-img">
+          ${c.image
+            ? `<img src="${c.image}" alt="${c.title}" loading="lazy">`
+            : `<div class="placeholder">📸</div>`
+          }
+        </div>
+        <div class="case-body">
+          <div class="case-tag">${c.tag}</div>
+          <div class="case-title">${c.title}</div>
+          <div class="case-text">${c.text}</div>
+        </div>
+      </div>
+    `)
+  ].join('');
+}
+
+// ── LIGHTBOX ──
+function openLightbox(src) {
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightbox').classList.add('active');
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+}
+
+// ── MOBILE NAV ──
+function toggleMobileNav() {
+  document.getElementById('mobileNav').classList.toggle('active');
+}
+
+// ── NAV SCROLL ──
+let lastScroll = 0;
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('nav');
+  const currentScroll = window.scrollY;
+  if (currentScroll > 100) {
+    nav.style.background = 'rgba(10,10,10,0.95)';
+  } else {
+    nav.style.background = 'rgba(10,10,10,0.85)';
+  }
+  lastScroll = currentScroll;
+});
+
+// ── LISTEN FOR STORAGE CHANGES ──
+window.addEventListener('storage', (e) => {
+  if (e.key === DATA_KEY) {
+    renderPricing();
+    renderCases();
+  }
+});
+
+// Also poll for changes (for same-tab updates from admin)
+setInterval(() => {
+  const stored = localStorage.getItem(DATA_KEY);
+  if (stored && stored !== window._lastData) {
+    window._lastData = stored;
+    renderPricing();
+    renderCases();
+  }
+}, 1000);
+
+// ── INIT ──
+window._lastData = localStorage.getItem(DATA_KEY);
+renderPricing();
+renderCases();
+
+// Comparison table click toggle
+(function() {
+  const table = document.querySelector('.comparison-table');
+  if (!table) return;
+  const ths = table.querySelectorAll('th');
+  ths.forEach((th, i) => {
+    th.addEventListener('click', () => {
+      if (i === 0) {
+        table.classList.toggle('active-left');
+        table.classList.remove('active-right');
+      } else {
+        table.classList.toggle('active-right');
+        table.classList.remove('active-left');
+      }
+      // If toggling off, remove both
+      if (!table.classList.contains('active-left') && !table.classList.contains('active-right')) {
+        table.classList.remove('active-left', 'active-right');
+      }
+    });
+  });
+})();
+
+// Keyboard: ESC to close lightbox
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeLightbox();
+});
+</script>
+
+</body>
+</html>
