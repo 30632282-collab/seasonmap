@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seasonmap · Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fafaf7;
+    --bg-alt: #f5f5f0;
+    --bg-card: #ffffff;
+    --bg-card-hover: #fafaf7;
+    --gold: #c8973a;
+    --gold-light: #d4a84e;
+    --text-primary: #1a1a1a;
+    --text-secondary: #555555;
+    --text-muted: #888888;
+    --border: #e0e0d8;
+    --border-light: #e8e8e0;
+    --danger: #e0556e;
+    --danger-bg: rgba(224,85,110,0.1);
+    --success: #4caf84;
+    --success-bg: rgba(76,175,132,0.1);
+    --info: #5b9bd5;
+    --info-bg: rgba(91,155,213,0.1);
+    --deep-green: #1a3a2a;
+    --accent-green: #2e7d57;
+    --white: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── LAYOUT ── */
+  .admin-layout {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 260px;
+    background: var(--bg-alt);
+    border-right: 1px solid var(--border);
+    padding: 32px 0;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+  }
+  .sidebar-header {
+    padding: 0 28px 32px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .sidebar-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 3px;
+    margin-bottom: 6px;
+  }
+  .sidebar-subtitle {
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .sidebar-nav {
+    flex: 1;
+    padding: 0 16px;
+  }
+  .sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 13px;
+    border-radius: 8px;
+    transition: all 0.2s;
+    margin-bottom: 4px;
+    cursor: pointer;
+  }
+  .sidebar-nav a:hover { background: rgba(255,255,255,0.04); color: var(--text-primary); }
+  .sidebar-nav a.active { background: rgba(200,164,92,0.1); color: var(--gold); }
+  .sidebar-nav a .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+  .sidebar-footer {
+    padding: 24px 28px 0;
+    border-top: 1px solid var(--border);
+    margin-top: auto;
+  }
+  .sidebar-footer a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 12px;
+    transition: color 0.2s;
+  }
+  .sidebar-footer a:hover { color: var(--text-primary); }
+
+  /* ── MAIN ── */
+  .main {
+    flex: 1;
+    margin-left: 260px;
+    padding: 40px;
+    min-height: 100vh;
+  }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .page-header {
+    margin-bottom: 36px;
+  }
+  .page-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+  .page-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .card-subtitle {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .btn-primary {
+    background: var(--gold);
+    color: var(--bg);
+  }
+  .btn-primary:hover { background: var(--gold-light); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-light);
+  }
+  .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-danger {
+    background: var(--danger-bg);
+    color: var(--danger);
+    border: 1px solid rgba(224,85,110,0.2);
+  }
+  .btn-danger:hover { background: rgba(224,85,110,0.2); }
+  .btn-success {
+    background: var(--success-bg);
+    color: var(--success);
+    border: 1px solid rgba(76,175,132,0.2);
+  }
+  .btn-success:hover { background: rgba(76,175,132,0.2); }
+  .btn-sm { padding: 6px 14px; font-size: 11px; letter-spacing: 0.5px; }
+  .btn-icon {
+    width: 36px; height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid var(--border-light);
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 16px;
+  }
+  .btn-icon:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-icon.danger:hover { border-color: var(--danger); color: var(--danger); }
+
+  /* ── FORMS ── */
+  .form-group {
+    margin-bottom: 18px;
+  }
+  .form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+  .form-input, .form-textarea, .form-select {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  .form-input:focus, .form-textarea:focus, .form-select:focus {
+    border-color: var(--gold);
+  }
+  .form-textarea {
+    resize: vertical;
+    min-height: 80px;
+    line-height: 1.6;
+  }
+  .form-select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6560' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 40px;
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .form-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+  .form-check input[type="checkbox"] {
+    width: 18px; height: 18px;
+    accent-color: var(--gold);
+    cursor: pointer;
+  }
+  .form-check label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+
+  /* ── PRICING TABLE ── */
+  .pricing-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .pricing-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr auto;
+    gap: 16px;
+    align-items: center;
+    padding: 18px 20px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: border-color 0.2s;
+  }
+  .pricing-row:hover { border-color: var(--border-light); }
+  .pricing-row.featured { border-color: rgba(200,164,92,0.3); background: rgba(200,164,92,0.04); }
+  .pricing-row .plan-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-primary);
+  }
+  .pricing-row .plan-price {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    color: var(--gold);
+  }
+  .pricing-row .plan-period {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .pricing-row .plan-badge {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 1px;
+    background: var(--gold);
+    color: var(--bg);
+    padding: 3px 10px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .pricing-row .actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  /* ── CASE TABLE ── */
+  .case-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .case-row {
+    display: grid;
+    grid-template-columns: 120px 1fr 100px 80px auto;
+    gap: 16px;
+    align-items: center;
+    padding: 16px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: border-color 0.2s;
+  }
+  .case-row:hover { border-color: var(--border-light); }
+  .case-row.hidden { opacity: 0.45; }
+  .case-thumb {
+    width: 120px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--bg-alt);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    opacity: 0.4;
+    position: relative;
+    cursor: pointer;
+  }
+  .case-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    inset: 0;
+  }
+  .case-thumb .thumb-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+    color: white;
+    font-size: 12px;
+  }
+  .case-thumb:hover .thumb-overlay { opacity: 1; }
+  .case-info .case-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .case-info .case-tag {
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .status-badge {
+    display: inline-block;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+  .status-visible { background: var(--success-bg); color: var(--success); }
+  .status-hidden { background: var(--danger-bg); color: var(--danger); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .modal-overlay.active { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 640px;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 36px;
+  }
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+  }
+  .modal-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 24px;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .modal-close:hover { color: var(--text-primary); }
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── IMAGE UPLOAD ── */
+  .image-upload-area {
+    border: 2px dashed var(--border-light);
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .image-upload-area:hover { border-color: var(--gold); background: rgba(200,164,92,0.03); }
+  .image-upload-area.has-image { border-style: solid; padding: 0; }
+  .image-upload-area img {
+    width: 100%;
+    max-height: 260px;
+    object-fit: cover;
+    display: block;
+  }
+  .upload-placeholder {
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.8;
+  }
+  .upload-placeholder .upload-icon {
+    font-size: 40px;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .image-actions {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    gap: 8px;
+  }
+
+  /* ── FEATURES LIST ── */
+  .features-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .feature-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .feature-row .form-input { flex: 1; }
+  .feature-row .btn-icon {
+    width: 32px; height: 32px;
+    font-size: 14px;
+  }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 24px;
+    font-size: 13px;
+    color: var(--text-primary);
+    z-index: 2000;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s;
+    pointer-events: none;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.success { border-color: var(--success); }
+  .toast.error { border-color: var(--danger); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 24px; }
+    .pricing-row { grid-template-columns: 1fr 1fr; }
+    .case-row { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="admin-layout">
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">SEASONMAP</div>
+    <div class="sidebar-subtitle">Admin Panel</div>
+  </div>
+  <nav class="sidebar-nav">
+    <a class="active" data-page="pricing" onclick="switchPage('pricing')">
+      <span class="nav-icon">💎</span> Pricing Plans
+    </a>
+    <a data-page="cases" onclick="switchPage('cases')">
+      <span class="nav-icon">📸</span> Case Studies
+    </a>
+    <a data-page="settings" onclick="switchPage('settings')">
+      <span class="nav-icon">⚙️</span> Settings
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <a href="seasonmap_preview.html" target="_blank">🔗 View Live Site →</a>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<main class="main">
+
+  <!-- ══ PRICING PAGE ══ -->
+  <div class="page active" id="page-pricing">
+    <div class="page-header">
+      <h1 class="page-title">Pricing Plans</h1>
+      <p class="page-desc">Manage partnership pricing tiers. Changes are reflected on the live site immediately.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Active Plans</div>
+          <div class="card-subtitle">Drag to reorder is not supported — plans appear in list order</div>
+        </div>
+        <button class="btn btn-primary" onclick="openPricingModal()">+ Add Plan</button>
+      </div>
+
+      <div class="pricing-list" id="pricingList">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Pricing Footer Note</div>
+      </div>
+      <div class="form-group">
+        <textarea class="form-textarea" id="pricingNoteInput" rows="4" placeholder="Enter pricing disclaimer / note..."></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="savePricingNote()">Save Note</button>
+    </div>
+  </div>
+
+  <!-- ══ CASES PAGE ══ -->
+  <div class="page" id="page-cases">
+    <div class="page-header">
+      <h1 class="page-title">Case Studies</h1>
+      <p class="page-desc">Manage showcase cases. Each supports 1 image. Toggle visibility or delete cases. Hidden cases appear dimmed on the live site.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">All Cases</div>
+          <div class="card-subtitle" id="caseCount">0 cases · 0 visible</div>
+        </div>
+        <button class="btn btn-primary" onclick="openCaseModal()">+ Add Case</button>
+      </div>
+
+      <div class="case-list" id="caseList">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SETTINGS PAGE ══ -->
+  <div class="page" id="page-settings">
+    <div class="page-header">
+      <h1 class="page-title">Settings</h1>
+      <p class="page-desc">Global site configuration.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="margin-bottom: 20px;">Data Management</div>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.7;">
+        All data is stored in your browser's localStorage under the key <code style="background: var(--bg); padding: 2px 8px; border-radius: 4px; color: var(--gold);">CHAOLV_SITE_DATA</code>.
+        The live site reads from this same key — any changes here are reflected immediately.
+      </p>
+      <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px; padding: 12px 16px; background: var(--bg); border-radius: 8px; line-height: 1.7;" id="storageInfo">
+        Checking storage...
+      </p>
+
+      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <button class="btn btn-secondary" onclick="exportData()">📥 Export Data (JSON)</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📤 Import Data (JSON)</button>
+        <button class="btn btn-danger" onclick="resetData()">⚠️ Reset to Defaults</button>
+      </div>
+      <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="margin-bottom: 20px;">Preview</div>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.7;">
+        Open the live site in a new tab to see your changes.
+      </p>
+      <a href="seasonmap_preview.html" target="_blank" class="btn btn-primary">🔗 Open Live Site</a>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<!-- ══ PRICING MODAL ══ -->
+<div class="modal-overlay" id="pricingModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="pricingModalTitle">Add Plan</div>
+      <button class="modal-close" onclick="closePricingModal()">&times;</button>
+    </div>
+
+    <input type="hidden" id="pricingEditId">
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Plan Name</label>
+        <input type="text" class="form-input" id="pricingName" placeholder="e.g. Starter">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Price (number only)</label>
+        <input type="text" class="form-input" id="pricingPrice" placeholder="e.g. 18,000">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Currency Symbol</label>
+        <input type="text" class="form-input" id="pricingCurrency" placeholder="¥">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Period</label>
+        <input type="text" class="form-input" id="pricingPeriod" placeholder="e.g. / Year">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Saving Text (optional)</label>
+        <input type="text" class="form-input" id="pricingSaving" placeholder="e.g. Save ¥6,000">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Badge Text (optional)</label>
+        <input type="text" class="form-input" id="pricingBadge" placeholder="e.g. Most Popular">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">CTA Button Text</label>
+        <input type="text" class="form-input" id="pricingCtaText" placeholder="e.g. Get Started">
+      </div>
+      <div class="form-group">
+        <label class="form-label">CTA Link</label>
+        <input type="text" class="form-input" id="pricingCtaLink" placeholder="e.g. #contact">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="form-check">
+        <input type="checkbox" id="pricingFeatured">
+        <label for="pricingFeatured">Featured plan (highlighted with gold border)</label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Features List</label>
+      <div class="features-editor" id="pricingFeaturesEditor"></div>
+      <button class="btn btn-secondary btn-sm" style="margin-top: 8px;" onclick="addFeatureRow()">+ Add Feature</button>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closePricingModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="savePricingPlan()">Save Plan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CASE MODAL ══ -->
+<div class="modal-overlay" id="caseModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="caseModalTitle">Add Case</div>
+      <button class="modal-close" onclick="closeCaseModal()">&times;</button>
+    </div>
+
+    <input type="hidden" id="caseEditId">
+
+    <div class="form-group">
+      <label class="form-label">Case Title</label>
+      <input type="text" class="form-input" id="caseTitle" placeholder="e.g. Southeast Asian DMC">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Tag / Category</label>
+      <input type="text" class="form-input" id="caseTag" placeholder="e.g. Destination Management">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea class="form-textarea" id="caseText" rows="4" placeholder="Describe the case study results..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Image</label>
+      <div class="image-upload-area" id="caseImageUpload" onclick="document.getElementById('caseImageFile').click()">
+        <div class="upload-placeholder">
+          <span class="upload-icon">🖼️</span>
+          Click to upload an image<br>
+          <span style="font-size: 11px; opacity: 0.6;">Auto-compressed · JPG/PNG/WebP</span>
+        </div>
+      </div>
+      <input type="file" id="caseImageFile" accept="image/*" style="display: none;" onchange="handleCaseImageUpload(event)">
+      <button class="btn btn-sm" style="margin-top: 8px; background:var(--danger-bg); color:var(--danger); border:1px solid rgba(224,85,110,0.2); border-radius:8px; cursor:pointer; font-family:Inter,sans-serif; font-size:11px; letter-spacing:0.5px;" onclick="removeCaseImage()">Remove Image</button>
+    </div>
+
+    <div class="form-group">
+      <div class="form-check">
+        <input type="checkbox" id="caseHidden">
+        <label for="caseHidden">Hidden (appears dimmed on live site, not interactive)</label>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeCaseModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveCase()">Save Case</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════
+// IndexedDB — image storage (avoids 5MB localStorage limit)
+// ═══════════════════════════════════════
+const IDB_NAME = 'CHAOLV_IMAGES', IDB_VERSION = 1;
+let _idb = null;
+function openIDB() {
+  return new Promise((resolve, reject) => {
+    if (_idb) return resolve(_idb);
+    const req = indexedDB.open(IDB_NAME, IDB_VERSION);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains('case_images')) {
+        db.createObjectStore('case_images', { keyPath: 'caseId' });
+      }
+    };
+    req.onsuccess = e => { _idb = e.target.result; resolve(_idb); };
+    req.onerror = e => reject(e.target.error);
+  });
+}
+function idbPut(caseId, base64) {
+  return new Promise((resolve, reject) => {
+    openIDB().then(db => {
+      const tx = db.transaction('case_images', 'readwrite');
+      tx.objectStore('case_images').put({ caseId, image: base64 });
+      tx.oncomplete = resolve;
+      tx.onerror = () => reject(tx.error);
+    });
+  });
+}
+function idbGet(caseId) {
+  return new Promise(resolve => {
+    openIDB().then(db => {
+      const tx = db.transaction('case_images', 'readonly');
+      const req = tx.objectStore('case_images').get(caseId);
+      req.onsuccess = () => resolve(req.result ? req.result.image : null);
+      req.onerror = () => resolve(null);
+    }).catch(() => resolve(null));
+  });
+}
+function idbDel(caseId) {
+  return openIDB().then(db => {
+    const tx = db.transaction('case_images', 'readwrite');
+    tx.objectStore('case_images').delete(caseId);
+    return new Promise(resolve => { tx.oncomplete = resolve; });
+  });
+}
+async function getIDBUsage() {
+  if (navigator.storage && navigator.storage.estimate) {
+    const est = await navigator.storage.estimate();
+    return { usage: est.usage || 0, quota: est.quota || 0 };
+  }
+  return { usage: 0, quota: 0 };
+}
+
+// ═══════════════════════════════════════
+// DATA MANAGEMENT (localStorage for metadata only)
+// ═══════════════════════════════════════
+const DATA_KEY = 'CHAOLV_SITE_DATA';
+
+function getDefaultData() {
+  return {
+    pricing: [
+      {
+        id: 1,
+        name: 'WeChat Optimizer',
+        price: '15,000',
+        currency: '¥',
+        period: '/ Year',
+        saving: '',
+        featured: false,
+        badge: 'For Existing Accounts',
+        features: [
+          'Optimize your existing WeChat Official Account',
+          '52 premium Chinese articles per year',
+          'Itinerary design tailored for Chinese travelers',
+          'High-end Chinese quotation & proposal documents',
+          'Direct lead forwarding — zero commission',
+          'One country, one partner exclusivity'
+        ],
+        ctaText: 'Get Started',
+        ctaLink: '#contact'
+      },
+      {
+        id: 5,
+        name: 'WeChat Optimizer Plus',
+        price: '18,000',
+        currency: '¥',
+        period: '/ Year',
+        saving: '',
+        featured: false,
+        badge: 'One Article / Week',
+        features: [
+          'Optimize your existing WeChat Official Account',
+          '52 premium Chinese articles per year (1 per week)',
+          'Dedicated content editor & strategy',
+          'High-end Chinese quotation & proposal documents',
+          'Direct lead forwarding — zero commission',
+          'One country, one partner exclusivity'
+        ],
+        ctaText: 'Get Started',
+        ctaLink: '#contact'
+      },
+      {
+        id: 2,
+        name: 'Premium',
+        price: '30,000',
+        currency: '¥',
+        period: '/ 2 Years',
+        saving: 'Best Value · ¥15,000/year',
+        featured: true,
+        badge: 'Most Popular',
+        features: [
+          'All WeChat Optimizer services × 2 years',
+          'WeChat Official Account setup & management',
+          'Trade show representation × 1 per year',
+          'Priority resource scheduling',
+          'Quarterly performance review calls',
+          'Ideal for operators committed to China market'
+        ],
+        ctaText: 'Choose Premium',
+        ctaLink: '#contact'
+      },
+      {
+        id: 3,
+        name: 'Enterprise',
+        price: '50,000',
+        currency: '¥',
+        period: '/ 2 Years',
+        saving: 'Enhanced partnership',
+        featured: false,
+        badge: '',
+        features: [
+          'All Premium services × 2 years',
+          '104 articles per year (2× frequency)',
+          'Trade show representation × 2 per year',
+          'Dedicated account manager',
+          'Monthly strategy calls & custom reports'
+        ],
+        ctaText: 'Contact Us',
+        ctaLink: '#contact'
+      },
+      {
+        id: 4,
+        name: 'Full-Service China Setup',
+        price: '88,000',
+        currency: '¥',
+        period: 'One-Time',
+        saving: 'End-to-end China market entry',
+        featured: false,
+        badge: 'Turnkey Solution',
+        features: [
+          'China company registration (full legal setup)',
+          'Registered business address in China',
+          'Business license & industrial/commercial filing',
+          'Accounting & bookkeeping proxy services',
+          'Licensed international travel agency accreditation',
+          'Dedicated WeChat Official Account operation'
+        ],
+        ctaText: 'Talk to Us',
+        ctaLink: '#contact'
+      }
+    ],
+    pricingNote: 'WeChat Optimizer is designed for travel operators who already have a WeChat Official Account. Premium & Enterprise include full account setup. Trade show material and travel costs reimbursed at actual cost. All terms subject to formal partnership agreement.',
+    cases: [
+      {
+        id: 1,
+        title: 'Southeast Asian DMC',
+        tag: 'Destination Management',
+        text: 'Helped a premier Southeast Asian DMC establish their WeChat presence from scratch. Within 12 months, generated 50+ qualified leads and 8 confirmed high-end family bookings.',
+        image: '',
+        hidden: false
+      },
+      {
+        id: 2,
+        title: 'European Luxury Tour Operator',
+        tag: 'Luxury Travel',
+        text: 'Partnered with a European luxury tour operator to create culturally adapted content. Our localized approach resulted in a 40% inquiry conversion rate.',
+        image: '',
+        hidden: false
+      },
+      {
+        id: 3,
+        title: 'African Safari Specialist',
+        tag: 'Adventure Travel',
+        text: 'Represented an African safari operator at CITM Shanghai, generating 120+ qualified trade contacts in 3 days.',
+        image: '',
+        hidden: false
+      },
+      {
+        id: 4,
+        title: 'Japanese Cultural Experience Provider',
+        tag: 'Cultural Tourism',
+        text: 'Created a comprehensive WeChat content calendar. The account grew to 5,000+ followers in 8 months.',
+        image: '',
+        hidden: true
+      },
+      {
+        id: 5,
+        title: 'South American Adventure Travel',
+        tag: 'Adventure Travel',
+        text: 'Launched the first dedicated Chinese-language WeChat account for a South American destination.',
+        image: '',
+        hidden: true
+      }
+    ]
+  };
+}
+
+function loadData() {
+  const stored = localStorage.getItem(DATA_KEY);
+  if (stored) {
+    try { return JSON.parse(stored); }
+    catch(e) { console.error('Parse error'); }
+  }
+  const d = getDefaultData();
+  saveData(d);
+  return d;
+}
+
+function saveData(data) {
+  localStorage.setItem(DATA_KEY, JSON.stringify(data));
+}
+
+function showToast(msg, type = '') {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className = 'toast ' + type + ' show';
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+// ═══════════════════════════════════════
+// PAGE SWITCHING
+// ═══════════════════════════════════════
+function switchPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelector(`[data-page="${name}"]`).classList.add('active');
+
+  if (name === 'pricing') renderPricingList();
+  if (name === 'cases') renderCaseList();
+  if (name === 'settings') updateStorageInfo();
+}
+
+async function updateStorageInfo() {
+  const el = document.getElementById('storageInfo');
+  if (!el) return;
+  const data = loadData();
+  const json = JSON.stringify(data);
+  const usedKB = (json.length / 1024).toFixed(1);
+  const limitKB = 5120;
+  const pct = ((json.length / (limitKB * 1024)) * 100).toFixed(1);
+
+  let imgCount = 0;
+  data.cases.forEach(c => {
+    if (c.image === 'idb' || (c.image && c.image.startsWith('data:'))) imgCount++;
+  });
+
+  const idbInfo = await getIDBUsage();
+  const idbUsed = idbInfo.usage > 0 ? (idbInfo.usage / 1024).toFixed(0) + ' KB' : '—';
+
+  el.innerHTML = `
+    LS: <strong>${usedKB}</strong> / ~5 MB (${pct}%) &nbsp;|&nbsp;
+    IDB images: ${idbUsed} &nbsp;|&nbsp;
+    ${imgCount} image(s) &nbsp;|&nbsp;
+    ${data.cases.length} cases &nbsp;|&nbsp;
+    ${data.pricing.length} plans
+  `;
+}
+
+// ═══════════════════════════════════════
+// PRICING MANAGEMENT
+// ═══════════════════════════════════════
+function renderPricingList() {
+  const data = loadData();
+  const list = document.getElementById('pricingList');
+
+  document.getElementById('pricingNoteInput').value = data.pricingNote;
+
+  list.innerHTML = data.pricing.map((p, i) => `
+    <div class="pricing-row${p.featured ? ' featured' : ''}">
+      <div>
+        <div class="plan-name">${p.name} ${p.badge ? `<span class="plan-badge">${p.badge}</span>` : ''}</div>
+        <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">${p.features.length} features · ${p.featured ? 'Featured' : 'Standard'}</div>
+      </div>
+      <div class="plan-price">${p.currency}${p.price}</div>
+      <div class="plan-period">${p.period}</div>
+      <div style="font-size: 12px; color: var(--text-muted);">${p.saving || '—'}</div>
+      <div class="actions">
+        <button class="btn-icon" onclick="editPricingPlan(${p.id})" title="Edit">✏️</button>
+        <button class="btn-icon danger" onclick="deletePricingPlan(${p.id})" title="Delete">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+let nextPricingId = 100;
+
+function openPricingModal(editId = null) {
+  document.getElementById('pricingModal').classList.add('active');
+  document.getElementById('pricingModalTitle').textContent = editId ? 'Edit Plan' : 'Add Plan';
+  document.getElementById('pricingEditId').value = editId || '';
+  document.getElementById('pricingFeaturesEditor').innerHTML = '';
+
+  if (editId) {
+    const data = loadData();
+    const plan = data.pricing.find(p => p.id === editId);
+    if (plan) {
+      document.getElementById('pricingName').value = plan.name;
+      document.getElementById('pricingPrice').value = plan.price;
+      document.getElementById('pricingCurrency').value = plan.currency;
+      document.getElementById('pricingPeriod').value = plan.period;
+      document.getElementById('pricingSaving').value = plan.saving;
+      document.getElementById('pricingBadge').value = plan.badge;
+      document.getElementById('pricingCtaText').value = plan.ctaText;
+      document.getElementById('pricingCtaLink').value = plan.ctaLink;
+      document.getElementById('pricingFeatured').checked = plan.featured;
+      plan.features.forEach(f => addFeatureRow(f));
+    }
+  } else {
+    document.getElementById('pricingName').value = '';
+    document.getElementById('pricingPrice').value = '';
+    document.getElementById('pricingCurrency').value = '¥';
+    document.getElementById('pricingPeriod').value = '/ Year';
+    document.getElementById('pricingSaving').value = '';
+    document.getElementById('pricingBadge').value = '';
+    document.getElementById('pricingCtaText').value = 'Get Started';
+    document.getElementById('pricingCtaLink').value = '#contact';
+    document.getElementById('pricingFeatured').checked = false;
+    // Add 3 empty feature rows
+    addFeatureRow(); addFeatureRow(); addFeatureRow();
+  }
+}
+
+function closePricingModal() {
+  document.getElementById('pricingModal').classList.remove('active');
+}
+
+function addFeatureRow(value = '') {
+  const editor = document.getElementById('pricingFeaturesEditor');
+  const row = document.createElement('div');
+  row.className = 'feature-row';
+  row.innerHTML = `
+    <input type="text" class="form-input" value="${value.replace(/"/g, '&quot;')}" placeholder="Feature description...">
+    <button class="btn-icon danger" onclick="this.parentElement.remove()" title="Remove">×</button>
+  `;
+  editor.appendChild(row);
+}
+
+function getFeatureValues() {
+  const editor = document.getElementById('pricingFeaturesEditor');
+  const inputs = editor.querySelectorAll('input');
+  return Array.from(inputs).map(i => i.value).filter(v => v.trim());
+}
+
+function savePricingPlan() {
+  const editId = document.getElementById('pricingEditId').value;
+  const data = loadData();
+
+  const plan = {
+    name: document.getElementById('pricingName').value.trim(),
+    price: document.getElementById('pricingPrice').value.trim(),
+    currency: document.getElementById('pricingCurrency').value.trim(),
+    period: document.getElementById('pricingPeriod').value.trim(),
+    saving: document.getElementById('pricingSaving').value.trim(),
+    badge: document.getElementById('pricingBadge').value.trim(),
+    ctaText: document.getElementById('pricingCtaText').value.trim(),
+    ctaLink: document.getElementById('pricingCtaLink').value.trim(),
+    featured: document.getElementById('pricingFeatured').checked,
+    features: getFeatureValues()
+  };
+
+  if (!plan.name || !plan.price) {
+    showToast('Plan name and price are required', 'error');
+    return;
+  }
+
+  if (editId) {
+    const idx = data.pricing.findIndex(p => p.id === parseInt(editId));
+    if (idx >= 0) {
+      data.pricing[idx] = { ...data.pricing[idx], ...plan };
+    }
+  } else {
+    plan.id = ++nextPricingId;
+    data.pricing.push(plan);
+  }
+
+  saveData(data);
+  closePricingModal();
+  renderPricingList();
+  showToast('Plan saved successfully', 'success');
+}
+
+function editPricingPlan(id) {
+  openPricingModal(id);
+}
+
+function deletePricingPlan(id) {
+  if (!confirm('Delete this pricing plan? This cannot be undone.')) return;
+  const data = loadData();
+  data.pricing = data.pricing.filter(p => p.id !== id);
+  saveData(data);
+  renderPricingList();
+  showToast('Plan deleted', 'success');
+}
+
+function savePricingNote() {
+  const data = loadData();
+  data.pricingNote = document.getElementById('pricingNoteInput').value;
+  saveData(data);
+  showToast('Pricing note saved', 'success');
+}
+
+// ═══════════════════════════════════════
+// CASE MANAGEMENT
+// ═══════════════════════════════════════
+let tempCaseImage = null;
+
+function renderCaseList() {
+  const data = loadData();
+  const list = document.getElementById('caseList');
+  const countEl = document.getElementById('caseCount');
+  const visibleCount = data.cases.filter(c => !c.hidden).length;
+  countEl.textContent = `${data.cases.length} cases · ${visibleCount} visible`;
+
+  list.innerHTML = data.cases.map(c => `
+    <div class="case-row${c.hidden ? ' hidden' : ''}">
+      <div class="case-thumb" id="case-thumb-${c.id}" onclick="window.open('')">
+        <span class="thumb-loading" style="font-size:32px;opacity:0.4;">📸</span>
+      </div>
+      <div class="case-info">
+        <div class="case-name">${c.title}</div>
+        <div class="case-tag">${c.tag}</div>
+        <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px; line-height: 1.5; max-width: 400px;">${c.text.substring(0, 100)}...</div>
+      </div>
+      <div>
+        <span class="status-badge ${c.hidden ? 'status-hidden' : 'status-visible'}">${c.hidden ? 'Hidden' : 'Visible'}</span>
+      </div>
+      <div id="case-img-status-${c.id}">—</div>
+      <div class="actions">
+        <button class="btn-icon" onclick="editCase(${c.id})" title="Edit">✏️</button>
+        <button class="btn-icon" onclick="toggleCase(${c.id})" title="${c.hidden ? 'Show' : 'Hide'}">${c.hidden ? '👁️' : '🙈'}</button>
+        <button class="btn-icon danger" onclick="deleteCase(${c.id})" title="Delete">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+
+  // Load thumbnails from IndexedDB asynchronously
+  data.cases.forEach(async c => {
+    // Try IDB first, fall back to legacy localStorage base64
+    let img = await idbGet(c.id);
+    if (!img && c.image && c.image.startsWith('data:')) img = c.image;
+    const thumb = document.getElementById('case-thumb-' + c.id);
+    const status = document.getElementById('case-img-status-' + c.id);
+    if (img && thumb) {
+      thumb.innerHTML = `<img src="${img}" alt=""><div class="thumb-overlay">View</div>`;
+      thumb.onclick = () => window.open(img, '_blank');
+      if (status) status.textContent = '📷';
+    }
+  });
+}
+
+let nextCaseId = 100;
+
+async function openCaseModal(editId = null) {
+  document.getElementById('caseModal').classList.add('active');
+  document.getElementById('caseModalTitle').textContent = editId ? 'Edit Case' : 'Add Case';
+  document.getElementById('caseEditId').value = editId || '';
+  tempCaseImage = null;
+
+  if (editId) {
+    const data = loadData();
+    const c = data.cases.find(cs => cs.id === editId);
+    if (c) {
+      document.getElementById('caseTitle').value = c.title;
+      document.getElementById('caseTag').value = c.tag;
+      document.getElementById('caseText').value = c.text;
+      document.getElementById('caseHidden').checked = c.hidden;
+      // Load image from IDB, fallback to legacy localStorage
+      let img = await idbGet(c.id);
+      if (!img && c.image && c.image.startsWith('data:')) img = c.image;
+      tempCaseImage = img || null;
+      renderCaseImagePreview();
+    }
+  } else {
+    document.getElementById('caseTitle').value = '';
+    document.getElementById('caseTag').value = '';
+    document.getElementById('caseText').value = '';
+    document.getElementById('caseHidden').checked = false;
+    renderCaseImagePreview();
+  }
+}
+
+function closeCaseModal() {
+  document.getElementById('caseModal').classList.remove('active');
+  tempCaseImage = null;
+}
+
+function handleCaseImageUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  if (!file.type.match(/^image\/(jpeg|png|webp)$/)) {
+    showToast('Please select a JPG, PNG, or WebP image', 'error');
+    event.target.value = '';
+    return;
+  }
+
+  const img = new Image();
+  const url = URL.createObjectURL(file);
+  img.onload = function() {
+    URL.revokeObjectURL(url);
+    // Aggressive compression to avoid localStorage overflow
+    const MAX_W = 600;
+    const MAX_H = 375;
+    let w = img.width, h = img.height;
+    if (w > MAX_W || h > MAX_H) {
+      const ratio = Math.min(MAX_W / w, MAX_H / h);
+      w = Math.round(w * ratio);
+      h = Math.round(h * ratio);
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, w, h);
+    tempCaseImage = canvas.toDataURL('image/jpeg', 0.6);
+    renderCaseImagePreview();
+    event.target.value = '';
+  };
+  img.onerror = function() {
+    URL.revokeObjectURL(url);
+    showToast('Failed to load image', 'error');
+    event.target.value = '';
+  };
+  img.src = url;
+}
+
+function renderCaseImagePreview() {
+  const area = document.getElementById('caseImageUpload');
+  if (tempCaseImage) {
+    area.className = 'image-upload-area has-image';
+    area.innerHTML = `
+      <img src="${tempCaseImage}" alt="Case image">
+      <div class="image-actions">
+        <button class="btn-icon danger" onclick="event.stopPropagation(); removeCaseImage()" title="Remove">×</button>
+      </div>
+    `;
+  } else {
+    area.className = 'image-upload-area';
+    area.innerHTML = `
+      <div class="upload-placeholder">
+        <span class="upload-icon">🖼️</span>
+        Click to upload an image<br>
+        <span style="font-size: 11px; opacity: 0.6;">Auto-compressed · JPG/PNG/WebP</span>
+      </div>
+    `;
+  }
+}
+
+function removeCaseImage() {
+  tempCaseImage = null;
+  renderCaseImagePreview();
+  document.getElementById('caseImageFile').value = '';
+}
+
+async function saveCase() {
+  const editId = document.getElementById('caseEditId').value;
+  const data = loadData();
+
+  const caseData = {
+    title: document.getElementById('caseTitle').value.trim(),
+    tag: document.getElementById('caseTag').value.trim(),
+    text: document.getElementById('caseText').value.trim(),
+    image: tempCaseImage ? 'idb' : '',  // 'idb' = stored in IndexedDB
+    hidden: document.getElementById('caseHidden').checked
+  };
+
+  if (!caseData.title || !caseData.text) {
+    showToast('Title and description are required', 'error');
+    return;
+  }
+
+  let caseId;
+  if (editId) {
+    caseId = parseInt(editId);
+    const idx = data.cases.findIndex(c => c.id === caseId);
+    if (idx >= 0) {
+      data.cases[idx] = { ...data.cases[idx], ...caseData };
+    }
+  } else {
+    caseId = ++nextCaseId;
+    caseData.id = caseId;
+    data.cases.push(caseData);
+  }
+
+  try {
+    // Save metadata (no base64) to localStorage
+    saveData(data);
+    // Save image to IndexedDB
+    await idbPut(caseId, tempCaseImage || '');
+  } catch(e) {
+    showToast('Save failed: ' + e.message, 'error');
+    return;
+  }
+  closeCaseModal();
+  renderCaseList();
+  showToast('Case saved successfully', 'success');
+}
+
+function editCase(id) {
+  openCaseModal(id);
+}
+
+function toggleCase(id) {
+  const data = loadData();
+  const c = data.cases.find(cs => cs.id === id);
+  if (c) {
+    c.hidden = !c.hidden;
+    saveData(data);
+    renderCaseList();
+    showToast(`Case ${c.hidden ? 'hidden' : 'visible'}`, 'success');
+  }
+}
+
+async function deleteCase(id) {
+  if (!confirm('Delete this case study? This cannot be undone.')) return;
+  const data = loadData();
+  data.cases = data.cases.filter(c => c.id !== id);
+  saveData(data);
+  await idbDel(id);
+  renderCaseList();
+  showToast('Case deleted', 'success');
+}
+
+// ═══════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════
+function exportData() {
+  const data = loadData();
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'seasonmap_data_backup_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Data exported', 'success');
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.pricing || !data.cases) {
+        throw new Error('Invalid data format');
+      }
+      if (!confirm('This will replace all current data. Continue?')) return;
+      saveData(data);
+      // Update ID counters
+      const maxPricingId = Math.max(...data.pricing.map(p => p.id), 100);
+      const maxCaseId = Math.max(...data.cases.map(c => c.id), 100);
+      nextPricingId = maxPricingId + 1;
+      nextCaseId = maxCaseId + 1;
+      renderPricingList();
+      renderCaseList();
+      showToast('Data imported successfully', 'success');
+    } catch(err) {
+      showToast('Invalid JSON file', 'error');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function resetData() {
+  if (!confirm('⚠️ This will delete all your changes and restore default data. This cannot be undone. Are you sure?')) return;
+  if (!confirm('Final confirmation: Reset ALL data to defaults?')) return;
+  saveData(getDefaultData());
+  nextPricingId = 100;
+  nextCaseId = 100;
+  renderPricingList();
+  renderCaseList();
+  showToast('Data reset to defaults', 'success');
+}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+// Ensure defaults exist
+if (!localStorage.getItem(DATA_KEY)) {
+  saveData(getDefaultData());
+}
+
+// Set next IDs
+const initData = loadData();
+nextPricingId = Math.max(...initData.pricing.map(p => p.id), 100) + 1;
+nextCaseId = Math.max(...initData.cases.map(c => c.id), 100) + 1;
+
+// Initial render
+renderPricingList();
+renderCaseList();
+
+// Close modals on overlay click
+document.getElementById('pricingModal').addEventListener('click', function(e) {
+  if (e.target === this) closePricingModal();
+});
+document.getElementById('caseModal').addEventListener('click', function(e) {
+  if (e.target === this) closeCaseModal();
+});
+
+// Keyboard: ESC to close modals
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closePricingModal();
+    closeCaseModal();
+  }
+});
+</script>
+
+</body>
+</html>

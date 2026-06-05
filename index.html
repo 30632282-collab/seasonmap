@@ -1,6 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- IMMEDIATE CLEANUP: runs before any other script -->
+<script>
+(function(){
+  try {
+    var key = 'CHAOLV_SITE_DATA';
+    var raw = localStorage.getItem(key);
+    if (raw) {
+      var data = JSON.parse(raw);
+      if (data && data.cases && data.cases.length > 6) {
+        var removed = data.cases.slice(6);
+        data.cases = data.cases.slice(0, 6);
+        localStorage.setItem(key, JSON.stringify(data));
+        console.log('[CLEANUP] Removed ' + removed.length + ' extra cases, kept 6');
+      }
+    }
+  } catch(e) { console.error('Cleanup error:', e); }
+})();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Seasonmap · Your Gateway to the Chinese Travel Market</title>
@@ -1171,6 +1189,38 @@
   .section-alt .exclusive-banner .title { color: var(--white); }
   .section-alt .exclusive-banner .text { color: rgba(255,255,255,0.55); }
 
+  /* ── LANGUAGE SWITCHER ── */
+  .lang-switch { position: relative; margin-left: 16px; }
+  .lang-btn {
+    background: none; border: 1px solid var(--border); border-radius: 6px;
+    padding: 6px 12px; font-size: 12px; color: var(--text-secondary);
+    cursor: pointer; display: flex; align-items: center; gap: 6px;
+    font-family: 'Inter',sans-serif; transition: all 0.2s;
+  }
+  .lang-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .lang-dropdown {
+    display: none; position: absolute; top: 100%; right: 0; margin-top: 4px;
+    background: var(--white); border: 1px solid var(--border); border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12); min-width: 170px; z-index: 1001; overflow: hidden;
+  }
+  .lang-dropdown.show { display: block; }
+  .lang-dropdown a {
+    display: block; padding: 10px 16px; font-size: 13px; color: var(--text-primary);
+    text-decoration: none; cursor: pointer; transition: background 0.15s;
+  }
+  .lang-dropdown a:hover { background: var(--light-green); }
+  .lang-dropdown a.sel { color: var(--gold); font-weight: 600; }
+
+  /* ── RTL (Arabic) ── */
+  html[dir="rtl"] body { direction: rtl; text-align: right; }
+  html[dir="rtl"] .nav-inner { flex-direction: row-reverse; }
+  html[dir="rtl"] .lang-switch { margin-left: 0; margin-right: 16px; }
+  html[dir="rtl"] .lang-dropdown { right: auto; left: 0; }
+  html[dir="rtl"] .hero-cta-group { justify-content: flex-end; }
+  html[dir="rtl"] .footer-col { text-align: right; }
+  html[dir="rtl"] .comparison-table th, html[dir="rtl"] .comparison-table td { text-align: right; }
+  html[dir="rtl"] .steps-note { border-left: none; border-right: 3px solid var(--gold); border-radius: 8px 0 0 8px; }
+
 </style>
 </head>
 <body>
@@ -1180,64 +1230,69 @@
   <div class="nav-inner">
     <a href="#" class="nav-logo">SEASONMAP <span class="nav-logo-dot"></span></a>
     <ul class="nav-links">
-      <li><a href="#services">Services</a></li>
-      <li><a href="#why-us">Why Us</a></li>
-      <li><a href="#how-it-works">How It Works</a></li>
-      <li><a href="#cases">Case Studies</a></li>
-      <li><a href="#pricing">Pricing</a></li>
-      <li><a href="#contact" class="nav-cta">Get Started</a></li>
+      <li><a href="#services" data-i18n="nav.sv">Services</a></li>
+      <li><a href="#why-us" data-i18n="nav.wu">Why Us</a></li>
+      <li><a href="#how-it-works" data-i18n="nav.hw">How It Works</a></li>
+      <li><a href="#cases" data-i18n="nav.cs">Case Studies</a></li>
+      <li><a href="#pricing" data-i18n="nav.pr">Pricing</a></li>
+      <li><a href="#contact" class="nav-cta" data-i18n="nav.gs">Get Started</a></li>
     </ul>
+    <div class="lang-switch">
+      <button class="lang-btn" onclick="toggleLang()">🌐 EN</button>
+      <div class="lang-dropdown" id="langDropdown">
+      </div>
+    </div>
     <button class="mobile-toggle" onclick="toggleMobileNav()">☰</button>
   </div>
 </nav>
 
 <div class="mobile-nav" id="mobileNav">
-  <a href="#services" onclick="toggleMobileNav()">Services</a>
-  <a href="#why-us" onclick="toggleMobileNav()">Why Us</a>
-  <a href="#how-it-works" onclick="toggleMobileNav()">How It Works</a>
-  <a href="#cases" onclick="toggleMobileNav()">Case Studies</a>
-  <a href="#pricing" onclick="toggleMobileNav()">Pricing</a>
-  <a href="#contact" onclick="toggleMobileNav()">Get Started</a>
+  <a href="#services" onclick="toggleMobileNav()" data-i18n="nav.sv">Services</a>
+  <a href="#why-us" onclick="toggleMobileNav()" data-i18n="nav.wu">Why Us</a>
+  <a href="#how-it-works" onclick="toggleMobileNav()" data-i18n="nav.hw">How It Works</a>
+  <a href="#cases" onclick="toggleMobileNav()" data-i18n="nav.cs">Case Studies</a>
+  <a href="#pricing" onclick="toggleMobileNav()" data-i18n="nav.pr">Pricing</a>
+  <a href="#contact" onclick="toggleMobileNav()" data-i18n="nav.gs">Get Started</a>
 </div>
 
 <!-- ── HERO ── -->
 <section class="hero">
-  <div class="hero-badge">🌏 One Country · One Exclusive Partner</div>
+    <div class="hero-badge" data-i18n="hero.bd">🌏 One Country · One Exclusive Partner</div>
   <h1 class="hero-title">
-    Instant Access to<br>
-    <em>China's Travel Market</em>
+    <span data-i18n="hero.t1">Instant Access to</span><br>
+    <em data-i18n="hero.t2">China's Travel Market</em>
   </h1>
   <p class="hero-subtitle">
-    Premium WeChat Content Management for Global Travel Agencies | High Conversion with Verified Results. Proven by real cases, our overall booking conversion including repeat orders exceeds <strong style="color:var(--gold);">10.24%</strong>.
+    <span data-i18n="hero.st">Premium WeChat Content Management for Global Travel Agencies | High Conversion with Verified Results. Proven by real cases, our overall booking conversion including repeat orders exceeds <strong style="color:var(--gold);" data-i18n="hero.pct">10.24%</strong>.</span>
   </p>
 
   <!-- Immediate Value Props -->
   <div class="hero-value-grid">
     <div class="hero-value-item">
       <div class="hero-value-num">¥300K</div>
-      <div class="hero-value-label">Save / Year<br>vs. Hiring Staff</div>
+      <div class="hero-value-label" data-i18n="hero.v1">Save / Year<br>vs. Hiring Staff</div>
     </div>
     <div class="hero-value-item">
       <div class="hero-value-num">30<small style="font-size:14px"> Days</small></div>
-      <div class="hero-value-label">To Go Live<br>WeChat + Content</div>
+      <div class="hero-value-label" data-i18n="hero.v2">To Go Live<br>WeChat + Content</div>
     </div>
     <div class="hero-value-item">
       <div class="hero-value-num">3,000<small style="font-size:14px">+</small></div>
-      <div class="hero-value-label">Active WeChat<br>Followers Ready</div>
+      <div class="hero-value-label" data-i18n="hero.v3">Active WeChat<br>Followers Ready</div>
     </div>
     <div class="hero-value-item">
       <div class="hero-value-num">0</div>
-      <div class="hero-value-label">Staff to Hire<br>Full Outsourced</div>
+      <div class="hero-value-label" data-i18n="hero.v4">Staff to Hire<br>Full Outsourced</div>
     </div>
   </div>
 
   <div class="hero-divider"></div>
   <div class="hero-cta-group">
-    <a href="#pricing" class="btn-primary">Explore Partnership</a>
-    <a href="#how-it-works" class="btn-secondary">How It Works</a>
+    <a href="#pricing" class="btn-primary" data-i18n="hero.cta1">Explore Partnership</a>
+    <a href="#how-it-works" class="btn-secondary" data-i18n="hero.cta2">How It Works</a>
   </div>
   <div class="hero-scroll">
-    <span>Scroll</span>
+    <span data-i18n="hero.sc">Scroll</span>
     <div class="hero-scroll-line"></div>
   </div>
 </section>
@@ -1245,48 +1300,48 @@
 <!-- ── PAIN POINTS ── -->
 <section class="section" id="challenge">
   <div class="container">
-    <div class="section-label">The Opportunity</div>
-    <h2 class="section-title">In China, a WeChat Official Account Is Your Best Brand Showcase</h2>
-    <p class="section-desc">
+    <div class="section-label" data-i18n="opp.lb">The Opportunity</div>
+    <h2 class="section-title" data-i18n="opp.tl">In China, a WeChat Official Account Is Your Best Brand Showcase</h2>
+    <p class="section-desc" data-i18n="opp.ds">
       China's outbound travel market is massive — over 130 million travelers per year. With Seasonmap as your on-the-ground partner, the platforms, the content, and the leads all become simple and accessible.
     </p>
     <div class="pain-grid">
       <div class="pain-item">
         <div class="pain-num">01</div>
-        <div class="pain-title">Underestimated Platform Potential</div>
+        <div class="pain-title"><span data-i18n="opp.p1t">Underestimated Platform Potential</span></div>
         <div class="pain-text">Many overseas tourism boards and travel agencies have already registered WeChat Official Accounts — but their content is operated by under-invested or disconnected teams. The visual layout fails to reflect the beauty of the destination. Breathtaking landscapes and cultural treasures deserve world-class visual presentation, yet most accounts fall short of capturing Chinese travelers' attention.</div>
       </div>
       <div class="pain-item">
         <div class="pain-num">02</div>
-        <div class="pain-title">Prohibitive Local Staffing Costs</div>
+        <div class="pain-title"><span data-i18n="opp.p2t">Prohibitive Local Staffing Costs</span></div>
         <div class="pain-text">Hiring a professional social media content editor with visual design capability in China costs at least RMB 10,000 per month for one person — and that's before you find someone who truly understands your industry, your audience, and can operate the account consistently and stably. The true cost of in-house operation is far higher than most realize.</div>
       </div>
       <div class="pain-item">
         <div class="pain-num">03</div>
-        <div class="pain-title">Trade Show Costs — and the Aftermath</div>
+        <div class="pain-title"><span data-i18n="opp.p3t">Trade Show Costs — and the Aftermath</span></div>
         <div class="pain-text">Exhibitions require substantial investment, but the real challenge begins after the show: keeping newly met buyers engaged. Sending follow-up PDFs by email or WeChat is a passive approach. When buyers actively follow your WeChat account, your regularly updated content continuously rekindles their memory and builds an ongoing connection with your destination. We also help localize your promotional materials so your brand makes a strong, professional impression at every trade show.</div>
       </div>
       <div class="pain-item">
         <div class="pain-num">04</div>
-        <div class="pain-title">Platform Registration Barriers</div>
-        <div class="pain-text">Registering core Chinese content platforms — WeChat Official Account, Xiaohongshu, and others — requires a verified Chinese business entity or a real-name individual identity verification. This presents a genuine obstacle for overseas enterprises entering the China market. Yet these platforms represent your brand's storefront and your destination's image in China — their promotional impact is significant and cannot be ignored.</div>
+        <div class="pain-title"><span data-i18n="opp.p4t">Platform Registration Barriers</span></div>
+        <div class="pain-text">Registering core Chinese content platforms — WeChat Official Account and others — requires a verified Chinese business entity or a real-name individual identity verification. This presents a genuine obstacle for overseas enterprises entering the China market. Yet these platforms represent your brand's storefront and your destination's image in China — their promotional impact is significant and cannot be ignored.</div>
       </div>
       <div class="pain-item">
         <div class="pain-num">05</div>
-        <div class="pain-title">Cultural & Aesthetic Gap</div>
-        <div class="pain-text">Chinese high-end consumers have entirely different decision journeys, content preferences, and information-seeking behaviors compared to Western travelers. Reusing overseas marketing materials in China rarely works — and poor visual presentation can actively damage a premium brand image.</div>
+        <div class="pain-title"><span data-i18n="opp.p5t">Cultural & Aesthetic Gap</span></div>
+        <div class="pain-text">Chinese high-end travelers differ greatly in decision-making paths, content tastes and information-gathering habits from Western customers. Even well-designed promotional visuals fail to spread efficiently via WeChat Official Accounts; careless, poorly managed official accounts may hurt premium brand reputation directly.</div>
       </div>
       <div class="pain-item">
         <div class="pain-num">06</div>
-        <div class="pain-title">Seasonmap Has Already Solved These</div>
+        <div class="pain-title"><span data-i18n="opp.p6t">Seasonmap Has Already Solved These</span></div>
         <div class="pain-text">We have already solved all of these challenges for you. From platform registration and daily content operations to trade show representation and cultural localization — our end-to-end partnership removes every barrier between your brand and the Chinese traveler.</div>
       </div>
     </div>
 
     <div class="exclusive-banner">
       <div class="icon">🤝</div>
-      <div class="title">Your Trusted, Reliable Partner in China</div>
-      <div class="text">Seasonmap is a licensed Chinese travel agency — a <strong style="color:var(--gold);">dependable, on-the-ground partner</strong> you can count on. We bring deep WeChat ecosystem expertise, a track record of serving 300+ high-net-worth families with proven conversion through WeChat Official Accounts, and a team recruited from China's leading travel companies. <strong style="color:var(--gold);">We deliver on every promise.</strong></div>
+      <div class="title" data-i18n="opp.eb_t">Your Trusted, Reliable Partner in China</div>
+      <div class="text" data-i18n-html="opp.eb_d">Seasonmap is a licensed Chinese travel agency — a <strong style="color:var(--gold);">dependable, on-the-ground partner</strong> you can count on. We bring deep WeChat ecosystem expertise, a track record of serving 300+ high-net-worth families with proven conversion through WeChat Official Accounts, and a team recruited from China's leading travel companies. <strong style="color:var(--gold);">We deliver on every promise.</strong></div>
     </div>
   </div>
 </section>
@@ -1358,35 +1413,35 @@
 <!-- ── EXCLUSIVITY ── -->
 <section class="section-exclusive" id="exclusivity">
   <div class="container">
-    <div class="section-label">Our Promise</div>
-    <h2 class="section-title">One Country, One Partner</h2>
-    <p class="section-desc">
+    <div class="section-label" data-i18n="exc.lb">Our Promise</div>
+    <h2 class="section-title" data-i18n="exc.tl">One Country, One Partner</h2>
+    <p class="section-desc" data-i18n-html="exc.ds">
       We believe in deep, focused partnerships — never diluted attention. For each destination country, we work exclusively with <strong style="color: var(--gold);">one travel operator</strong>. Your brand receives our full resources, undivided focus, and total market protection.
     </p>
 
     <div class="stats-grid">
       <div class="stat-item">
         <div class="stat-num">1<span class="stat-unit">:1</span></div>
-        <div class="stat-label">Exclusive Partner<br>per Country</div>
+        <div class="stat-label" data-i18n="exc.s1">Exclusive Partner<br>per Country</div>
       </div>
       <div class="stat-item">
         <div class="stat-num">3000<span class="stat-unit">+</span></div>
-        <div class="stat-label">Active WeChat Official<br>Account Followers</div>
+        <div class="stat-label" data-i18n="exc.s2">Active WeChat Official<br>Account Followers</div>
       </div>
       <div class="stat-item">
         <div class="stat-num">300<span class="stat-unit">+</span></div>
-        <div class="stat-label">High-Net-Worth<br>Families Served</div>
+        <div class="stat-label" data-i18n="exc.s3">High-Net-Worth<br>Families Served</div>
       </div>
       <div class="stat-item">
         <div class="stat-num">30<span class="stat-unit">%</span></div>
-        <div class="stat-label">Clients via WeChat<br>Content Marketing</div>
+        <div class="stat-label" data-i18n="exc.s4">Clients via WeChat<br>Content Marketing</div>
       </div>
     </div>
 
     <div class="exclusive-banner" style="margin-top: 40px;">
       <div class="icon" style="font-size:36px;">🌏</div>
-      <div class="title" style="font-size:22px; letter-spacing:1px;">One Country, One Partner — Guaranteed</div>
-      <div class="text" style="max-width:600px;">We work with <strong style="color:var(--gold);">only one travel operator per country</strong>. Once your country's slot is claimed, we will not partner with any competitor from that market. Lock in your exclusive partnership <strong style="color:var(--gold);">now</strong>. <span style="color:var(--gold); font-weight:600;">First come, first served.</span></div>
+      <div class="title" style="font-size:22px; letter-spacing:1px;" data-i18n="exc.eb_t">One Country, One Partner — Guaranteed</div>
+      <div class="text" style="max-width:600px;" data-i18n-html="exc.eb_d">We work with <strong style="color:var(--gold);">only one travel operator per country</strong>. Once your country's slot is claimed, we will not partner with any competitor from that market. Lock in your exclusive partnership <strong style="color:var(--gold);">now</strong>. <span style="color:var(--gold); font-weight:600;">First come, first served.</span></div>
     </div>
   </div>
 </section>
@@ -1394,37 +1449,37 @@
 <!-- ── SERVICES ── -->
 <section class="section" id="services">
   <div class="container">
-    <div class="section-label">What We Do</div>
-    <h2 class="section-title">Full-Service China Market Representation</h2>
-    <p class="section-desc">
+    <div class="section-label" data-i18n="svc.lb">What We Do</div>
+    <h2 class="section-title" data-i18n="svc.tl">Full-Service China Market Representation</h2>
+    <p class="section-desc" data-i18n="svc.ds">
       From WeChat account registration to daily content, trade show presence to lead forwarding — we are your complete China operating partner.
     </p>
 
     <div class="service-grid">
       <div class="service-card">
         <div class="service-icon">📱</div>
-        <div class="service-name">WeChat Official Account<span class="service-badge">Core Service</span></div>
-        <div class="service-text">We register and operate a dedicated WeChat Official Account for your destination — the first and only systematic Chinese-language promotional platform for your country. 52 premium articles per year covering local culture, travel guides, signature routes, and on-the-ground services. Full management: follower engagement, comment replies, analytics, and content strategy.</div>
+        <div class="service-name" data-i18n="svc.c1n">WeChat Official Account<span class="service-badge"Core Service</span></div>
+        <div class="service-text" data-i18n-html="svc.c1d">We register and operate a dedicated WeChat Official Account for your destination — the first and only systematic Chinese-language promotional platform for your country. 52 premium articles per year covering local culture, travel guides, signature routes, and on-the-ground services. Full management: follower engagement, comment replies, analytics, and content strategy.</div>
       </div>
       <div class="service-card">
         <div class="service-icon">🎪</div>
-        <div class="service-name">Trade Show Representation<span class="service-badge">Exclusive Identity</span></div>
-        <div class="service-text">We attend major Chinese travel exhibitions (COTTM, ITB China, CITM) exclusively under your brand. We localise your materials with precise Chinese translation — ensuring your brand message resonates accurately. Attendance cost: ¥1,000/person/day. All travel, material printing, and exhibition fees are reimbursed at actual cost — completely transparent.</div>
+        <div class="service-name" data-i18n="svc.c2n">Trade Show Representation<span class="service-badge"Exclusive Identity</span></div>
+        <div class="service-text" data-i18n-html="svc.c2d">We attend major Chinese travel exhibitions (COTTM, ITB China, CITM) exclusively under your brand. We localise your materials with precise Chinese translation — ensuring your brand message resonates accurately. Attendance cost: ¥1,000/person/day. All travel, material printing, and exhibition fees are reimbursed at actual cost — completely transparent.</div>
       </div>
       <div class="service-card">
         <div class="service-icon">🤝</div>
-        <div class="service-name">Direct Lead Forwarding<span class="service-badge">Zero Commission</span></div>
-        <div class="service-text">Every customer inquiry about your destination is forwarded directly to you. No intermediary fees, no commissions. Our revenue comes from the partnership — never from your client transactions. Interests fully aligned.</div>
+        <div class="service-name" data-i18n="svc.c3n">Direct Lead Forwarding<span class="service-badge"Zero Commission</span></div>
+        <div class="service-text" data-i18n-html="svc.c3d">Every customer inquiry about your destination is forwarded directly to you. No intermediary fees, no commissions. Our revenue comes from the partnership — never from your client transactions. Interests fully aligned.</div>
       </div>
       <div class="service-card">
         <div class="service-icon">🇨🇳</div>
-        <div class="service-name">Premium Chinese Content & Itinerary Design<span class="service-badge">High-End Localization</span></div>
-        <div class="service-text">We craft <strong>itineraries designed for Chinese travelers</strong> — not translated Western routes, but journeys built around Chinese preferences: pacing, dining, photo opportunities, shopping, and cultural storytelling. We also produce <strong>premium Chinese-language documents</strong> — client quotations, multi-day itineraries, and professional proposals — all written in authentic, locally-adapted Chinese for high-net-worth clients. Every piece is formatted to the standards of China's leading travel agencies.</div>
+        <div class="service-name" data-i18n="svc.c4n">Premium Chinese Content & Itinerary Design<span class="service-badge"High-End Localization</span></div>
+        <div class="service-text" data-i18n-html="svc.c4d">We craft <strong>itineraries designed for Chinese travelers</strong> — not translated Western routes, but journeys built around Chinese preferences: pacing, dining, photo opportunities, shopping, and cultural storytelling. We also produce <strong>premium Chinese-language documents</strong> — client quotations, multi-day itineraries, and professional proposals — all written in authentic, locally-adapted Chinese for high-net-worth clients. Every piece is formatted to the standards of China's leading travel agencies.</div>
       </div>
       <div class="service-card full-width">
         <div class="service-icon">🛡️</div>
         <div class="service-name">Complete Peace of Mind</div>
-        <div class="service-text">No staff to hire. No social insurance. No travel costs. No regulatory headaches. Our bilingual team handles everything — you get a complete China marketing operation with zero overhead.</div>
+        <div class="service-text" data-i18n-html="svc.c5d">No staff to hire. No social insurance. No travel costs. No regulatory headaches. Our bilingual team handles everything — you get a complete China marketing operation with zero overhead.</div>
       </div>
     </div>
   </div>
@@ -1433,40 +1488,40 @@
 <!-- ── HOW IT WORKS ── -->
 <section class="section section-alt section-bg-image" id="how-it-works" style="background: linear-gradient(180deg, rgba(26,58,42,0.88) 0%, rgba(26,58,42,0.72) 50%, rgba(26,58,42,0.88) 100%), url('https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?w=1920&q=80') center/cover no-repeat;">
   <div class="container">
-    <div class="section-label">Registration Process</div>
-    <h2 class="section-title">WeChat Official Account Setup</h2>
-    <p class="section-desc">
+    <div class="section-label" data-i18n="hw.lb">Registration Process</div>
+    <h2 class="section-title" data-i18n="hw.tl">WeChat Official Account Setup</h2>
+    <p class="section-desc" data-i18n-html="hw.ds">
       Setting up a WeChat Official Account as a foreign entity is complex. We manage the entire process — two clear pathways depending on your situation.
     </p>
 
     <div class="steps-container">
       <div class="step-option featured">
-        <div class="step-label">Option 1 · Recommended</div>
-        <div class="step-title">You Have a Registered Company in China</div>
-        <div class="step-desc">Fastest path to full verification and feature access. Full ownership under your Chinese entity.</div>
+        <div class="step-label" data-i18n="hw.o1l">Option 1 · Recommended</div>
+        <div class="step-title" data-i18n="hw.o1t">You Have a Registered Company in China</div>
+        <div class="step-desc" data-i18n="hw.o1d">Fastest path to full verification and feature access. Full ownership under your Chinese entity.</div>
         <ol class="step-list">
-          <li><strong>Document Collection</strong><span class="step-text">You provide business license, legal representative ID, corporate bank account, and certification documents.</span></li>
-          <li><strong>Registration & Verification</strong><span class="step-text">We complete account registration and official WeChat verification, set up basic menus and functions.</span></li>
-          <li><strong>Permission Configuration</strong><span class="step-text">We configure account access. Ownership remains with your company.</span></li>
-          <li><strong>Official Operation</strong><span class="step-text">We deliver daily content, design, community interaction, and monthly data reports.</span></li>
-          <li><strong>Ongoing Support</strong><span class="step-text">Regular content review, function adjustment, and annual certification renewal.</span></li>
+          <li><strong data-i18n="hw.o1s1">Document Collection</strong><span class="step-text" data-i18n="hw.o1s1d">You provide business license, legal representative ID, and certification documents.</span></li>
+          <li><strong data-i18n="hw.o1s2">Registration & Verification</strong><span class="step-text" data-i18n="hw.o1s2d">We complete account registration and official WeChat verification, set up basic menus and functions.</span></li>
+          <li><strong data-i18n="hw.o1s3">Permission Configuration</strong><span class="step-text" data-i18n="hw.o1s3d">We configure account access. Ownership remains with your company.</span></li>
+          <li><strong data-i18n="hw.o1s4">Official Operation</strong><span class="step-text" data-i18n="hw.o1s4d">We deliver daily content, design, community interaction, and monthly data reports.</span></li>
+          <li><strong data-i18n="hw.o1s5">Ongoing Support</strong><span class="step-text" data-i18n="hw.o1s5d">Regular content review, function adjustment, and annual certification renewal.</span></li>
         </ol>
       </div>
 
       <div class="step-option">
-        <div class="step-label">Option 2</div>
-        <div class="step-title">No Chinese Company Yet</div>
-        <div class="step-desc">Two pathways available — standard overseas Service Account or quick-launch personal account.</div>
+        <div class="step-label" data-i18n="hw.o2l">Option 2</div>
+        <div class="step-title" data-i18n="hw.o2t">No Chinese Company Yet</div>
+        <div class="step-desc" data-i18n="hw.o2d">Two pathways available — standard overseas Service Account or quick-launch personal account.</div>
         <ol class="step-list">
-          <li><strong>Standard: Register Overseas Service Account</strong><span class="step-text">We collect your overseas company documents, contact person ID, and bank info. We submit and complete registration for the overseas corporate Service Account.</span></li>
-          <li><strong>Permission Setup</strong><span class="step-text">We set up operation permissions. The account belongs to your overseas travel agency.</span></li>
-          <li><strong>Temporary: Personal Account Quick Launch</strong><span class="step-text">We register a personal account for immediate content release and fan engagement during the transition.</span></li>
-          <li><strong>Migration When Ready</strong><span class="step-text">Once you establish a Chinese company, we migrate all content and followers to your new corporate account.</span></li>
+          <li><strong data-i18n="hw.o2s1">Standard: Register Overseas Service Account</strong><span class="step-text" data-i18n="hw.o2s1d">We collect your overseas company documents and contact person ID. We submit and complete registration for the overseas corporate Service Account.</span></li>
+          <li><strong data-i18n="hw.o2s2">Permission Setup</strong><span class="step-text" data-i18n="hw.o2s2d">We set up operation permissions. The account belongs to your overseas travel agency.</span></li>
+          <li><strong data-i18n="hw.o2s3">Temporary: Personal Account Quick Launch</strong><span class="step-text" data-i18n="hw.o2s3d">We register a personal account for immediate content release and fan engagement during the transition. Lead time: 3 working days for registration and official approval, 1 working day for content release.</span></li>
+          <li><strong data-i18n="hw.o2s4">Migration When Ready</strong><span class="step-text" data-i18n="hw.o2s4d">Once you establish a Chinese company, we migrate all content and followers to your new corporate account.</span></li>
         </ol>
       </div>
     </div>
   </div>
-  <div class="steps-note" style="margin-top:24px; padding:16px 20px; background:rgba(200,151,58,0.08); border-left:3px solid var(--gold); border-radius:0 8px 8px 0; font-size:12.5px; color:rgba(255,255,255,0.75); line-height:1.8;">
+  <div class="steps-note" style="margin-top:24px; padding:16px 20px; background:rgba(200,151,58,0.08); border-left:3px solid var(--gold); border-radius:0 8px 8px 0; font-size:12.5px; color:rgba(255,255,255,0.75); line-height:1.8;" data-i18n-html="hw.note">
     <strong style="color:var(--gold);">Note:</strong> If you already own a WeChat Official Account but are unsatisfied with its operation or content quality, you only need to grant our team operation access under your guidance. Every login and publishing action is logged with real-name traceability — ensuring full transparency and account security.
   </div>
 </section>
@@ -1474,9 +1529,9 @@
 <!-- ── CASE STUDIES ── -->
 <section class="section" id="cases">
   <div class="container">
-    <div class="section-label">Case Studies</div>
-    <h2 class="section-title">Proven Results</h2>
-    <p class="section-desc">
+    <div class="section-label" data-i18n="cs.lb">Case Studies</div>
+    <h2 class="section-title" data-i18n="cs.tl">Proven Results</h2>
+    <p class="section-desc" data-i18n-html="cs.ds">
       Our managed accounts run from half a year to three years. While post performance differs, all traffic is organic; many articles hit thousands or tens of thousands of reads and drive real customer orders.
     </p>
 
@@ -1489,9 +1544,9 @@
 <!-- ── PRICING ── -->
 <section class="section section-alt" id="pricing">
   <div class="container">
-    <div class="section-label">Partnership Plans</div>
-    <h2 class="section-title">Transparent Investment</h2>
-    <p class="section-desc">
+    <div class="section-label" data-i18n="pr.lb">Partnership Plans</div>
+    <h2 class="section-title" data-i18n="pr.tl">Transparent Investment</h2>
+    <p class="section-desc" data-i18n-html="pr.ds">
       Simple, straightforward pricing with no hidden fees. Our revenue comes from the partnership — never from your client transactions.
     </p>
 
@@ -1504,11 +1559,11 @@
     </p>
 
     <div class="roi-box">
-      <div class="roi-title">Return on Investment</div>
-      <div class="roi-main">
+      <div class="roi-title" data-i18n="pr.roi_t">Return on Investment</div>
+      <div class="roi-main" data-i18n-html="pr.roi_m">
         One year of partnership costs less than <strong style="color: var(--gold);">two months' salary</strong> for a single local hire in China. Even <strong style="color: var(--gold);">one booking</strong> from a high-end family (average spend $5,000–$30,000 USD) covers your entire annual fee.
       </div>
-      <div class="roi-sub">Every subsequent booking is pure profit. The brand equity you build in the Chinese market carries strategic value far beyond the partnership fee.</div>
+      <div class="roi-sub" data-i18n="pr.roi_s">Every subsequent booking is pure profit. The brand equity you build in the Chinese market carries strategic value far beyond the partnership fee.</div>
     </div>
   </div>
 </section>
@@ -1516,51 +1571,51 @@
 <!-- ── COMPARISON ── -->
 <section class="section" id="comparison">
   <div class="container">
-    <div class="section-label">Why Seasonmap</div>
-    <h2 class="section-title">Going It Alone vs. Partnering with Seasonmap</h2>
-    <p class="section-desc">
+    <div class="section-label" data-i18n="cmp.lb">Why Seasonmap</div>
+    <h2 class="section-title" data-i18n="cmp.tl">Going It Alone vs. Partnering with Seasonmap</h2>
+    <p class="section-desc" data-i18n-html="cmp.ds">
       The numbers speak for themselves. Going it alone costs far more — in money, time, and missed opportunities.
     </p>
 
     <table class="comparison-table">
       <thead>
         <tr>
-          <th>Entering China Alone</th>
-          <th>Partnering with Seasonmap</th>
+          <th data-i18n="cmp.h1">Entering China Alone</th>
+          <th data-i18n="cmp.h2">Partnering with Seasonmap</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>Hire local marketing staff: ≥ ¥300,000/year total cost</td>
-          <td>No employees needed — zero staffing costs</td>
+          <td data-i18n="cmp.r1a">Hire local marketing staff: ≥ ¥300,000/year total cost</td>
+          <td data-i18n-html="cmp.r1b">No employees needed — zero staffing costs</td>
         </tr>
         <tr>
-          <td>Social insurance, benefits, compliance obligations</td>
-          <td>Zero social insurance or compliance burden</td>
+          <td data-i18n="cmp.r2a">Social insurance, benefits, compliance obligations</td>
+          <td data-i18n-html="cmp.r2b">Zero social insurance or compliance burden</td>
         </tr>
         <tr>
-          <td>Founder/executive travel: flights + hotels + visas</td>
-          <td>No travel to China required from you</td>
+          <td data-i18n="cmp.r3a">Founder/executive travel: flights + hotels + visas</td>
+          <td data-i18n-html="cmp.r3b">No travel to China required from you</td>
         </tr>
         <tr>
-          <td>Cold-start content: 12–24 months to build followers</td>
-          <td>Instant access to our established high-end readership</td>
+          <td data-i18n="cmp.r4a">Cold-start content: 12–24 months to build followers</td>
+          <td data-i18n-html="cmp.r4b">Instant access to our established high-end readership</td>
         </tr>
         <tr>
-          <td>Complex exhibition applications and booth design</td>
-          <td>Fully delegated to Seasonmap — transparent cost reimbursement</td>
+          <td data-i18n="cmp.r5a">Complex exhibition applications and booth design</td>
+          <td data-i18n-html="cmp.r5b">Fully delegated to Seasonmap — transparent cost reimbursement</td>
         </tr>
         <tr>
-          <td>Trust built through slow word-of-mouth accumulation</td>
-          <td>Leverage Seasonmap's reputation from 300+ high-end families</td>
+          <td data-i18n="cmp.r6a">Trust built through slow word-of-mouth accumulation</td>
+          <td data-i18n-html="cmp.r6b">Leverage Seasonmap's reputation from 300+ high-end families</td>
         </tr>
         <tr>
-          <td>Multiple channel partnerships dilute brand exposure</td>
-          <td>One country, one partner — exclusive channel access</td>
+          <td data-i18n="cmp.r7a">Multiple channel partnerships dilute brand exposure</td>
+          <td data-i18n-html="cmp.r7b">One country, one partner — exclusive channel access</td>
         </tr>
         <tr>
-          <td>Uncertain partner commitment and follow-through</td>
-          <td>A <strong style="color:var(--gold);">reliable, accountable partner</strong> — we deliver what we promise</td>
+          <td data-i18n="cmp.r8a">Uncertain partner commitment and follow-through</td>
+          <td data-i18n-html="cmp.r8b">A <strong style="color:var(--gold);">reliable, accountable partner</strong> — we deliver what we promise</td>
         </tr>
       </tbody>
     </table>
@@ -1571,8 +1626,8 @@
 <section class="section section-alt">
   <div class="container">
     <div class="testimonial">
-      <div class="testimonial-quote">We don't do traffic business. We do trust business.</div>
-      <div class="testimonial-author">— Seasonmap, Your Reliable Partner in China</div>
+      <div class="testimonial-quote" data-i18n="tst.q">We don't do traffic business. We do trust business.</div>
+      <div class="testimonial-author" data-i18n="tst.a">— Seasonmap, Your Reliable Partner in China</div>
     </div>
   </div>
 </section>
@@ -1580,11 +1635,11 @@
 <!-- ── CTA ── -->
 <section class="cta-section" id="contact">
   <div class="container">
-    <h2 class="cta-title">Ready to Enter the Chinese Market?</h2>
-    <p class="cta-subtitle">
+    <h2 class="cta-title" data-i18n="cta.tl">Ready to Enter the Chinese Market?</h2>
+    <p class="cta-subtitle" data-i18n="cta.st">
       Each country gets only one partnership slot. Secure yours before someone else does.
     </p>
-    <a href="seasonmap_contact.html" class="btn-primary" style="font-size: 14px; padding: 18px 42px;">Start the Conversation</a>
+    <a href="seasonmap_contact.html" class="btn-primary" style="font-size: 14px; padding: 18px 42px;" data-i18n="cta.btn">Start the Conversation</a>
   </div>
 </section>
 
@@ -1592,35 +1647,35 @@
 <footer class="footer">
   <div class="footer-grid">
     <div>
-      <div class="footer-brand">SEASONMAP</div>
-      <p class="footer-desc">
+      <div class="footer-brand" data-i18n="ftr.bd">SEASONMAP</div>
+      <p class="footer-desc" data-i18n-html="ftr.ds">
         A licensed Chinese travel agency and premium operating partner for international tour operators. One country, one partner — your exclusive gateway to China's travel market.
       </p>
     </div>
     <div class="footer-col">
-      <h4>Services</h4>
-      <a href="#services">WeChat Management</a>
-      <a href="#services">Trade Show Representation</a>
-      <a href="#services">Lead Forwarding</a>
-      <a href="#services">Chinese Localization</a>
+      <h4 data-i18n="ftr.h1">Services</h4>
+      <a href="#services" data-i18n="ftr.s1">WeChat Management</a>
+      <a href="#services" data-i18n="ftr.s2">Trade Show Representation</a>
+      <a href="#services" data-i18n="ftr.s3">Lead Forwarding</a>
+      <a href="#services" data-i18n="ftr.s4">Chinese Localization</a>
     </div>
     <div class="footer-col">
-      <h4>Company</h4>
-      <a href="#exclusivity">About Us</a>
-      <a href="#cases">Case Studies</a>
-      <a href="#pricing">Pricing</a>
-      <a href="#contact">Contact</a>
+      <h4 data-i18n="ftr.h2">Company</h4>
+      <a href="#exclusivity" data-i18n="ftr.c1">About Us</a>
+      <a href="#cases" data-i18n="ftr.c2">Case Studies</a>
+      <a href="#pricing" data-i18n="ftr.c3">Pricing</a>
+      <a href="#contact" data-i18n="ftr.c4">Contact</a>
     </div>
     <div class="footer-col">
-      <h4>Contact</h4>
-      <a href="#">WeChat: Elan-zhong</a>
-      <a href="#">Mobile: +86 186-2055-2833</a>
-      <a href="#">Guangzhou, China</a>
+      <h4 data-i18n="ftr.h3">Contact</h4>
+      <a href="#" data-i18n="ftr.ct1">WeChat: Elan-zhong</a>
+      <a href="mailto:seasonmap@163.com" data-i18n="ftr.ct2">Email: seasonmap@163.com</a>
+      <a href="#" data-i18n="ftr.ct3">Guangzhou, China</a>
     </div>
   </div>
   <div class="footer-bottom">
-    <span>&copy; 2026 Seasonmap. All rights reserved.</span>
-    <span>Guangzhou International Trade Centre, Tianhe District</span>
+    <span data-i18n="ftr.bt">&copy; 2026 Seasonmap. All rights reserved.</span>
+    <span data-i18n="ftr.b2">Guangzhou International Trade Centre, Tianhe District</span>
   </div>
 </footer>
 
@@ -1631,6 +1686,470 @@
 </div>
 
 <script>
+// ═══════════════════════════════════════════
+// I18N — Multi-language translation system
+// ═══════════════════════════════════════════
+(function(){
+var LK = 'SEASONMAP_LANG';
+var T = {
+en: {
+  nav: {sv:'Services',wu:'Why Us',hw:'How It Works',cs:'Case Studies',pr:'Pricing',gs:'Get Started'},
+  hero: {bd:'🌏 One Country · One Exclusive Partner',t1:'Instant Access to',t2:'China\'s Travel Market',st:'Premium WeChat Content Management for Global Travel Agencies | High Conversion with Verified Results. Proven by real cases, our overall booking conversion including repeat orders exceeds',pct:'10.24%',v1:'Save / Year<br>vs. Hiring Staff',v2:'Days',v3:'To Go Live<br>WeChat + Content',v4:'Active WeChat<br>Followers Ready',v5:'Staff to Hire<br>Full Outsourced',cta1:'Explore Partnership',cta2:'How It Works',sc:'Scroll'},
+  opp: {lb:'The Opportunity',tl:'In China, a WeChat Official Account Is Your Best Brand Showcase',ds:'China\'s outbound travel market is massive — over 130 million travelers per year. With Seasonmap as your on-the-ground partner, the platforms, the content, and the leads all become simple and accessible.',
+    p1t:'Underestimated Platform Potential',p1d:'Many overseas tourism boards and travel agencies have already registered WeChat Official Accounts — but their content is operated by under-invested or disconnected teams. The visual layout fails to reflect the beauty of the destination. Breathtaking landscapes and cultural treasures deserve world-class visual presentation, yet most accounts fall short of capturing Chinese travelers\' attention.',
+    p2t:'Prohibitive Local Staffing Costs',p2d:'Hiring a professional social media content editor with visual design capability in China costs at least RMB 10,000 per month for one person — and that\'s before you find someone who truly understands your industry, your audience, and can operate the account consistently and stably. The true cost of in-house operation is far higher than most realize.',
+    p3t:'Trade Show Costs — and the Aftermath',p3d:'Exhibitions require substantial investment, but the real challenge begins after the show: keeping newly met buyers engaged. Sending follow-up PDFs by email or WeChat is a passive approach. When buyers actively follow your WeChat account, your regularly updated content continuously rekindles their memory and builds an ongoing connection with your destination. We also help localize your promotional materials so your brand makes a strong, professional impression at every trade show.',
+    p4t:'Platform Registration Barriers',p4d:'Registering core Chinese content platforms — WeChat Official Account and others — requires a verified Chinese business entity or a real-name individual identity verification. This presents a genuine obstacle for overseas enterprises entering the China market. Yet these platforms represent your brand\'s storefront and your destination\'s image in China — their promotional impact is significant and cannot be ignored.',
+    p5t:'Cultural & Aesthetic Gap',p5d:'Chinese high-end travelers differ greatly in decision-making paths, content tastes and information-gathering habits from Western customers. Even well-designed promotional visuals fail to spread efficiently via WeChat Official Accounts; careless, poorly managed official accounts may hurt premium brand reputation directly.',
+    p6t:'Seasonmap Has Already Solved These',p6d:'We have already solved all of these challenges for you. From platform registration and daily content operations to trade show representation and cultural localization — our end-to-end partnership removes every barrier between your brand and the Chinese traveler.',
+    eb_t:'Your Trusted, Reliable Partner in China',eb_d:'Seasonmap is a licensed Chinese travel agency — a <strong style="color:var(--gold);">dependable, on-the-ground partner</strong> you can count on. We bring deep WeChat ecosystem expertise, a track record of serving 300+ high-net-worth families with proven conversion through WeChat Official Accounts, and a team recruited from China\'s leading travel companies. <strong style="color:var(--gold);">We deliver on every promise.</strong>'},
+  why: {lb:'Why Choose Us',tl:'We Eliminate Every Barrier to China Market Entry',ds:'From platform registration to daily operations, content creation to client conversion — every obstacle is handled by our team.',
+    c1t:'Exclusive WeChat Account Operation',c1d:'We register and run a dedicated account under your brand, releasing 52 high-quality articles every year at a cost far lower than hiring a full-time local operator in China.',
+    c2t:'Zero In-House Staff Required',c2d:'No extra employees, social insurance fees, or local compliance procedures needed on your side. You obtain a complete China marketing team with zero overhead costs.',
+    c3t:'Localized Brand Material & Exhibition Support',c3d:'We translate and professionally print your promotional materials for the Chinese market. One complimentary trade show attendance per year included — exhibition, material and travel costs reimbursed at actual cost.',
+    c4t:'Direct Lead Forwarding — Zero Commission',c4d:'All tourist inquiries are sent directly to your WeChat account, with zero commission fees and no intermediate charges. Our interests are fully aligned with yours.',
+    c5t:'One Country, One Partner — True Exclusivity',c5d:'We only cooperate with your company for your tourism destination projects. We will never work with your competitors to avoid brand dilution and customer diversion.',
+    c6t:'Full Chinese Localization',c6d:'We professionally translate all your travel routes, itineraries and quotations into authentic Chinese, optimized for Chinese tourists\' reading habits — instantly accessible to massive Chinese audiences.',
+    c7t:'Professional Bilingual Team',c7d:'Our team members are proficient in English listening, speaking, reading and writing, ensuring smooth and efficient communication throughout our cooperation.',
+    c8t:'Proven Marketing Performance',c8d:'Zero advertising spend — our entire follower base is organically attracted by original, high-quality content. 30% of our customer resources are acquired independently via WeChat content marketing.',
+    c9t:'Precision Customer Acquisition',c9d:'High average order values, exceptional repeat booking rates, and enthusiastic word-of-mouth referrals that fuel organic growth — a self-reinforcing cycle of visibility, credibility and bookings.',
+    c10t:'Licensed Travel Agency — High-End Focus',c10d:'We are a professional travel agency officially approved by China\'s tourism bureau with complete legal operating qualifications, specializing in tailor-made private routes for high-net-worth clients.'},
+  exc: {lb:'Our Promise',tl:'One Country, One Partner',ds:'We believe in deep, focused partnerships — never diluted attention. For each destination country, we work exclusively with <strong style="color: var(--gold);">one travel operator</strong>. Your brand receives our full resources, undivided focus, and total market protection.',
+    s1:'Exclusive Partner<br>per Country',s2:'Active WeChat Official<br>Account Followers',s3:'High-Net-Worth<br>Families Served',s4:'Clients via WeChat<br>Content Marketing',
+    eb_t:'One Country, One Partner — Guaranteed',eb_d:'We work with <strong style="color:var(--gold);">only one travel operator per country</strong>. Once your country\'s slot is claimed, we will not partner with any competitor from that market. Lock in your exclusive partnership <strong style="color:var(--gold);">now</strong>. <span style="color:var(--gold); font-weight:600;">First come, first served.</span>'},
+  svc: {lb:'What We Do',tl:'Full-Service China Market Representation',ds:'From WeChat account registration to daily content, trade show presence to lead forwarding — we are your complete China operating partner.',
+    c1n:'WeChat Official Account',c1b:'Core Service',c1d:'We register and operate a dedicated WeChat Official Account for your destination — the first and only systematic Chinese-language promotional platform for your country. 52 premium articles per year covering local culture, travel guides, signature routes, and on-the-ground services. Full management: follower engagement, comment replies, analytics, and content strategy.',
+    c2n:'Trade Show Representation',c2b:'Exclusive Identity',c2d:'We attend major Chinese travel exhibitions (COTTM, ITB China, CITM) exclusively under your brand. We localise your materials with precise Chinese translation — ensuring your brand message resonates accurately. Attendance cost: ¥1,000/person/day. All travel, material printing, and exhibition fees are reimbursed at actual cost — completely transparent.',
+    c3n:'Direct Lead Forwarding',c3b:'Zero Commission',c3d:'Every customer inquiry about your destination is forwarded directly to you. No intermediary fees, no commissions. Our revenue comes from the partnership — never from your client transactions. Interests fully aligned.',
+    c4n:'Premium Chinese Content & Itinerary Design',c4b:'High-End Localization',c4d:'We craft <strong>itineraries designed for Chinese travelers</strong> — not translated Western routes, but journeys built around Chinese preferences: pacing, dining, photo opportunities, shopping, and cultural storytelling. We also produce <strong>premium Chinese-language documents</strong> — client quotations, multi-day itineraries, and professional proposals — all written in authentic, locally-adapted Chinese for high-net-worth clients. Every piece is formatted to the standards of China\'s leading travel agencies.',
+    c5n:'Complete Peace of Mind',c5b:'',c5d:'No staff to hire. No social insurance. No travel costs. No regulatory headaches. Our bilingual team handles everything — you get a complete China marketing operation with zero overhead.'},
+  hw: {lb:'Registration Process',tl:'WeChat Official Account Setup',ds:'Setting up a WeChat Official Account as a foreign entity is complex. We manage the entire process — two clear pathways depending on your situation.',
+    o1l:'Option 1 · Recommended',o1t:'You Have a Registered Company in China',o1d:'Fastest path to full verification and feature access. Full ownership under your Chinese entity.',
+    o1s1:'Document Collection',o1s1d:'You provide business license, legal representative ID, and certification documents.',
+    o1s2:'Registration & Verification',o1s2d:'We complete account registration and official WeChat verification, set up basic menus and functions.',
+    o1s3:'Permission Configuration',o1s3d:'We configure account access. Ownership remains with your company.',
+    o1s4:'Official Operation',o1s4d:'We deliver daily content, design, community interaction, and monthly data reports.',
+    o1s5:'Ongoing Support',o1s5d:'Regular content review, function adjustment, and annual certification renewal.',
+    o2l:'Option 2',o2t:'No Chinese Company Yet',o2d:'Two pathways available — standard overseas Service Account or quick-launch personal account.',
+    o2s1:'Standard: Register Overseas Service Account',o2s1d:'We collect your overseas company documents and contact person ID. We submit and complete registration for the overseas corporate Service Account.',
+    o2s2:'Permission Setup',o2s2d:'We set up operation permissions. The account belongs to your overseas travel agency.',
+    o2s3:'Temporary: Personal Account Quick Launch',o2s3d:'We register a personal account for immediate content release and fan engagement during the transition. Lead time: 3 working days for registration and official approval, 1 working day for content release.',
+    o2s4:'Migration When Ready',o2s4d:'Once you establish a Chinese company, we migrate all content and followers to your new corporate account.',
+    note:'<strong style="color:var(--gold);">Note:</strong> If you already own a WeChat Official Account but are unsatisfied with its operation or content quality, you only need to grant our team operation access under your guidance. Every login and publishing action is logged with real-name traceability — ensuring full transparency and account security.'},
+  cs: {lb:'Case Studies',tl:'Proven Results',ds:'Our managed accounts run from half a year to three years. While post performance differs, all traffic is organic; many articles hit thousands or tens of thousands of reads and drive real customer orders.'},
+  pr: {lb:'Partnership Plans',tl:'Transparent Investment',ds:'Simple, straightforward pricing with no hidden fees. Our revenue comes from the partnership — never from your client transactions.',
+    roi_t:'Return on Investment',roi_m:'One year of partnership costs less than <strong style="color: var(--gold);">two months\' salary</strong> for a single local hire in China. Even <strong style="color: var(--gold);">one booking</strong> from a high-end family (average spend $5,000–$30,000 USD) covers your entire annual fee.',
+    roi_s:'Every subsequent booking is pure profit. The brand equity you build in the Chinese market carries strategic value far beyond the partnership fee.'},
+  cmp: {lb:'Why Seasonmap',tl:'Going It Alone vs. Partnering with Seasonmap',ds:'The numbers speak for themselves. Going it alone costs far more — in money, time, and missed opportunities.',
+    h1:'Entering China Alone',h2:'Partnering with Seasonmap',
+    r1a:'Hire local marketing staff: ≥ ¥300,000/year total cost',r1b:'No employees needed — zero staffing costs',
+    r2a:'Social insurance, benefits, compliance obligations',r2b:'Zero social insurance or compliance burden',
+    r3a:'Founder/executive travel: flights + hotels + visas',r3b:'No travel to China required from you',
+    r4a:'Cold-start content: 12–24 months to build followers',r4b:'Instant access to our established high-end readership',
+    r5a:'Complex exhibition applications and booth design',r5b:'Fully delegated to Seasonmap — transparent cost reimbursement',
+    r6a:'Trust built through slow word-of-mouth accumulation',r6b:'Leverage Seasonmap\'s reputation from 300+ high-end families',
+    r7a:'Multiple channel partnerships dilute brand exposure',r7b:'One country, one partner — exclusive channel access',
+    r8a:'Uncertain partner commitment and follow-through',r8b:'A <strong style="color:var(--gold);">reliable, accountable partner</strong> — we deliver what we promise'},
+  tst: {q:'We don\'t do traffic business. We do trust business.',a:'— Seasonmap, Your Reliable Partner in China'},
+  cta: {tl:'Ready to Enter the Chinese Market?',st:'Each country gets only one partnership slot. Secure yours before someone else does.',btn:'Start the Conversation'},
+  ftr: {bd:'SEASONMAP',ds:'A licensed Chinese travel agency and premium operating partner for international tour operators. One country, one partner — your exclusive gateway to China\'s travel market.',
+    h1:'Services',h2:'Company',h3:'Contact',
+    s1:'WeChat Management',s2:'Trade Show Representation',s3:'Lead Forwarding',s4:'Chinese Localization',
+    c1:'About Us',c2:'Case Studies',c3:'Pricing',c4:'Contact',
+    ct1:'WeChat: Elan-zhong',ct2:'Email: seasonmap@163.com',ct3:'Guangzhou, China',
+    bt:'© 2026 Seasonmap. All rights reserved.',b2:'Guangzhou International Trade Centre, Tianhe District'}
+},
+zh: {
+  nav: {sv:'服务',wu:'为什么选我们',hw:'合作流程',cs:'案例展示',pr:'定价方案',gs:'立即咨询'},
+  hero: {bd:'🌏 一国一伙伴·独家合作',t1:'即刻触达',t2:'中国旅游市场',st:'为全球旅行社提供高品质微信公众号内容运营 | 经真实案例验证的高转化率。包含复购在内的整体预订转化率超过',pct:'10.24%',v1:'节省/年<br>对比自聘员工',v2:'天',v3:'上线周期<br>公众号+内容',v4:'活跃公众号<br>粉丝就绪',v5:'无需雇佣<br>全程外包',cta1:'了解合作方案',cta2:'合作流程',sc:'向下滚动'},
+  opp: {lb:'市场机遇',tl:'在中国，微信公众号是您最好的品牌展示窗口',ds:'中国出境游市场规模庞大——每年超过1.3亿人次。有了Seasonmap作为您的地面合作伙伴，平台、内容和客源都变得简单可及。',
+    p1t:'被低估的平台潜力',p1d:'很多海外旅游局和旅行社已经注册了微信公众号，但内容由投入不足或脱节的团队运营。视觉呈现无法展现目的地的美感。令人叹为观止的风景和文化遗产值得世界级的视觉呈现，但大多数公众号难以吸引中国旅行者的注意。',
+    p2t:'高昂的本地人力成本',p2d:'在中国聘请一名具备视觉设计能力的专业社交媒体内容编辑，每人每月至少需要10,000元人民币——这还没算上找到真正了解您行业、受众并能稳定持续运营账号的人才。内部运营的真实成本远超多数人的认知。',
+    p3t:'展会成本——以及后续跟进',p3d:'参展需要大量投入，但真正的挑战在展会之后：如何保持与新买家之间的联系。通过邮件或微信发送PDF是种被动的方式。当买家主动关注您的公众号时，定期更新的内容会持续唤起他们的记忆，建立与您目的地的持续联系。我们还帮助本地化您的宣传物料，确保您的品牌在每个展会上都给人留下专业而深刻的印象。',
+    p4t:'平台注册壁垒',p4d:'注册中国核心内容平台——微信公众号等——需要经过验证的中国企业实体或实名个人身份认证。这对海外企业进入中国市场构成了实质性障碍。但这些平台代表着您品牌在中国的门面和目的地形象——其推广影响力不可忽视。',
+    p5t:'文化与审美差异',p5d:'中国高端消费者有着与西方旅行者完全不同的决策路径、内容偏好和信息获取行为。在海外市场使用的营销物料直接搬到中国很少奏效——糟糕的视觉呈现甚至会损害高端品牌形象。',
+    p6t:'Seasonmap已为您解决这些',p6d:'我们已经为您解决了所有这些挑战。从平台注册、日常内容运营到展会代理和文化本地化——我们的端到端合作消除了您的品牌与中国旅行者之间的每一个障碍。',
+    eb_t:'您值得信赖的中国合作伙伴',eb_d:'Seasonmap是一家持牌中国旅行社——一个您可以信赖的<strong style="color:var(--gold);">可靠的地面合作伙伴</strong>。我们拥有深厚的微信生态系统专业经验，服务过300+高净值家庭并通过微信公众号实现可验证的转化，团队从中国领先旅游公司招聘而来。<strong style="color:var(--gold);">我们兑现每一个承诺。</strong>'},
+  why: {lb:'为什么选择我们',tl:'我们消除进入中国市场的每一个障碍',ds:'从平台注册到日常运营，从内容创作到客户转化——每一个障碍都由我们的团队处理。',
+    c1t:'专属微信公众号运营',c1d:'我们以您的品牌注册并运营专属账号，每年发布52篇高质量文章，成本远低于在中国雇佣全职本地运营人员。',
+    c2t:'零内部员工需求',c2d:'无需额外员工、社保费用或本地合规程序。您以零间接成本获得一支完整的中国市场营销团队。',
+    c3t:'本地化品牌物料与展会支持',c3d:'我们为您翻译并专业印制面向中国市场的宣传物料。每年包含一次免费展会出席——展会、物料和差旅费用按实际成本报销。',
+    c4t:'直接客源转发——零佣金',c4d:'所有游客咨询直接转发至您的微信，零佣金、无中间费用。我们的利益与您完全一致。',
+    c5t:'一国一伙伴——真正独家',c5d:'我们只与您的公司在您的旅游目的地项目上合作。我们永远不会与您的竞争对手合作，避免品牌稀释和客户分流。',
+    c6t:'全面中文本地化',c6d:'我们将您的所有旅游路线、行程和报价专业翻译为地道中文，针对中国游客阅读习惯优化——即刻触达海量中国受众。',
+    c7t:'专业双语团队',c7d:'我们的团队成员精通英语听说读写，确保合作全程沟通顺畅高效。',
+    c8t:'可验证的营销业绩',c8d:'零广告支出——我们的全部粉丝基础由原创优质内容有机吸引而来。30%的客户资源通过微信内容营销独立获得。',
+    c9t:'精准客户获取',c9d:'高客单价、卓越的复购率和热情的口碑推荐推动有机增长——形成曝光度、信誉度和预订量的自我增强循环。',
+    c10t:'持牌旅行社——专注高端',c10d:'我们是经中国旅游局正式批准的专业旅行社，拥有完整的合法经营资质，专注于为高净值客户定制私人路线。'},
+  exc: {lb:'我们的承诺',tl:'一国一伙伴',ds:'我们信奉深度聚焦的合作——从不稀释关注。对于每个目的地国家，我们独家合作<strong style="color: var(--gold);">一家旅行运营商</strong>。您的品牌获得我们的全部资源、不分散的关注和全面的市场保护。',
+    s1:'独家合作伙伴<br>每个国家',s2:'活跃微信公众号<br>粉丝',s3:'高净值<br>家庭服务',s4:'客户来自微信<br>内容营销',
+    eb_t:'一国一伙伴——保障承诺',eb_d:'我们每个国家<strong style="color:var(--gold);">只与一家旅行运营商合作</strong>。一旦您所在国家的名额被锁定，我们将不会与该市场的任何竞争对手合作。<strong style="color:var(--gold);">立即</strong>锁定您的独家合作伙伴关系。<span style="color:var(--gold); font-weight:600;">先到先得。</span>'},
+  svc: {lb:'我们的服务',tl:'全周期中国市场代理',ds:'从微信公众号注册到日常内容，从展会出席到客户转发——我们是您完整的中国运营合作伙伴。',
+    c1n:'微信公众号',c1b:'核心服务',c1d:'我们为您的目的地注册并运营专属微信公众号——您的国家首个也是唯一的系统化中文推广平台。每年52篇优质文章，涵盖当地文化、旅行指南、特色路线和地面服务。全面管理：粉丝互动、评论回复、数据分析和内容策略。',
+    c2n:'展会代理',c2b:'独家身份',c2d:'我们以您的品牌独家出席中国主要旅游展会（COTTM、ITB China、CITM）。我们将您的物料进行精准中文翻译本地化——确保您的品牌信息准确传达。出席费用：¥1,000/人/天。所有差旅、物料印刷和展会费用按实报销——完全透明。',
+    c3n:'直接客源转发',c3b:'零佣金',c3d:'关于您目的地的每条客户咨询都直接转发给您。无中间费用，无佣金。我们的收入来自合作伙伴关系——从不来自您的客户交易。利益完全一致。',
+    c4n:'优质中文内容与行程设计',c4b:'高端本地化',c4d:'我们精心打造<strong>专为中国旅行者设计的行程</strong>——不是翻译的西方路线，而是围绕中国偏好构建的旅程：节奏、餐饮、拍照机会、购物和文化叙事。我们还制作<strong>优质中文文档</strong>——客户报价单、多日行程单和专业提案——全部以地道、本地化的中文撰写，面向高净值客户。每份文档均达到中国领先旅行社的标准格式。',
+    c5n:'全程无忧',c5b:'',c5d:'无需招聘员工。无需社保。无需差旅成本。无需应对监管。我们的双语团队处理一切——您以零间接成本获得完整的中国市场营销运营。'},
+  hw: {lb:'注册流程',tl:'微信公众号设置',ds:'作为外国实体设置微信公众号非常复杂。我们管理整个流程——根据您的情况提供两条清晰的路径。',
+    o1l:'方案一 · 推荐',o1t:'您在中国已有注册公司',o1d:'最快路径获得完整认证和功能访问。完全所有权归属于您的中国实体。',
+    o1s1:'文件收集',o1s1d:'您提供营业执照、法人代表身份证和认证文件。',
+    o1s2:'注册与认证',o1s2d:'我们完成账号注册和官方微信认证，设置基础菜单和功能。',
+    o1s3:'权限配置',o1s3d:'我们配置账号操作权限。账号所有权归属您的公司。',
+    o1s4:'正式运营',o1s4d:'我们提供日常内容、设计、社群互动和月度数据报告。',
+    o1s5:'持续支持',o1s5d:'定期内容复盘、功能调整和年度认证续期。',
+    o2l:'方案二',o2t:'暂无中国公司',o2d:'提供两条路径——标准海外服务号或快速启动个人号。',
+    o2s1:'标准：注册海外服务号',o2s1d:'我们收集您的海外公司文件和联系人身份证。我们提交并完成海外企业服务号的注册。',
+    o2s2:'权限设置',o2s2d:'我们设置运营权限。账号归属于您的海外旅行社。',
+    o2s3:'临时：个人号快速启动',o2s3d:'我们注册个人号，在过渡期间实现即时内容发布和粉丝互动。交付周期：注册及官方审核 3 个工作日，内容发布 1 个工作日。',
+    o2s4:'就绪后迁移',o2s4d:'一旦您在中国设立公司，我们将所有内容和粉丝迁移至您的新企业账号。',
+    note:'<strong style="color:var(--gold);">注意：</strong>如果您已拥有微信公众号但对运营或内容质量不满意，您只需在我们的指导下授权我们团队运营权限。每次登录和发布操作均有实名可追溯记录——确保完全透明和账号安全。'},
+  cs: {lb:'案例展示',tl:'可验证的成果',ds:'我们代运营的账号从半年到三年不等。虽然文章表现各有差异，但所有流量均为自然流量；多篇文章阅读量达数千甚至数万，并带来真实客户订单。'},
+  pr: {lb:'合作方案',tl:'透明的投资',ds:'简单明了的价格，无隐藏费用。我们的收入来自合作伙伴关系——从不来自您的客户交易。',
+    roi_t:'投资回报',roi_m:'一年的合作费用低于在中国雇佣一个本地员工的<strong style="color: var(--gold);">两个月工资</strong>。即使是一个高端家庭的<strong style="color: var(--gold);">一个预订</strong>（平均消费5,000-30,000美元）就足以覆盖您全年的合作费用。',
+    roi_s:'此后的每个预订都是纯利润。您在中国市场建立的品牌资产，其战略价值远超合作费用。'},
+  cmp: {lb:'为什么选Seasonmap',tl:'独自入场 vs. 与Seasonmap合作',ds:'数字说明一切。独自入场成本远高于——不仅是金钱，还有时间和错失的机遇。',
+    h1:'独自进入中国',h2:'与Seasonmap合作',
+    r1a:'雇佣本地市场人员：≥ ¥300,000/年总成本',r1b:'无需雇员——零人力成本',
+    r2a:'社保、福利、合规义务',r2b:'零社保或合规负担',
+    r3a:'创始人/高管差旅：机票+酒店+签证',r3b:'无需您来中国出差',
+    r4a:'冷启动内容：12-24个月建立粉丝',r4b:'即时接入我们已建立的高端读者群',
+    r5a:'复杂的展会申请和展位设计',r5b:'全权委托Seasonmap——透明费用报销',
+    r6a:'靠缓慢的口碑积累建立信任',r6b:'借助Seasonmap服务300+高端家庭的声誉',
+    r7a:'多渠道合作稀释品牌曝光',r7b:'一国一伙伴——独家渠道接入',
+    r8a:'不确定的合作方承诺与执行',r8b:'一个<strong style="color:var(--gold);">可靠、值得信赖的合作伙伴</strong>——我们说到做到'},
+  tst: {q:'我们不做流量生意。我们做信任生意。',a:'— Seasonmap，您在中国值得信赖的合作伙伴'},
+  cta: {tl:'准备好进入中国市场了吗？',st:'每个国家只有一个合作名额。在别人抢走之前锁定您的。',btn:'开启对话'},
+  ftr: {bd:'SEASONMAP',ds:'持牌中国旅行社，国际旅行运营商的高端运营合作伙伴。一国一伙伴——您进入中国旅游市场的独家通道。',
+    h1:'服务',h2:'公司',h3:'联系方式',
+    s1:'微信管理',s2:'展会代理',s3:'客源转发',s4:'中文本地化',
+    c1:'关于我们',c2:'案例',c3:'定价',c4:'联系',
+    ct1:'微信：Elan-zhong',ct2:'邮箱：seasonmap@163.com',ct3:'中国广州',
+    bt:'© 2026 Seasonmap。保留所有权利。',b2:'广州市天河区广东国际贸易大厦'}
+},
+fr: {
+  nav: {sv:'Services',wu:'Pourquoi Nous',hw:'Fonctionnement',cs:'Études de Cas',pr:'Tarifs',gs:'Commencer'},
+  hero: {bd:'🌏 Un Pays · Un Partenaire Exclusif',t1:'Accès Instantané au',t2:'Marché du Voyage Chinois',st:'Gestion Premium de Contenu WeChat pour Agences de Voyage Internationales | Haute Conversion avec Résultats Vérifiés. Notre taux de conversion global, incluant les réservations répétées, dépasse',pct:'10,24%',v1:'Économisez/An<br>vs. Embaucher',v2:'Jours',v3:'Pour Être Opérationnel<br>WeChat + Contenu',v4:'Abonnés WeChat<br>Actifs et Prêts',v5:'Aucun Employé<br>Externalisation Totale',cta1:'Explorer le Partenariat',cta2:'Fonctionnement',sc:'Défiler'},
+  opp: {lb:'L\'Opportunité',tl:'En Chine, un Compte Officiel WeChat Est Votre Meilleure Vitrine',ds:'Le marché chinois du voyage sortant est immense — plus de 130 millions de voyageurs par an. Avec Seasonmap comme partenaire sur place, les plateformes, le contenu et les prospects deviennent simples et accessibles.',
+    p1t:'Potentiel de Plateforme Sous-Estimé',p1d:'De nombreux offices de tourisme et agences de voyage ont déjà enregistré des comptes WeChat — mais leur contenu est géré par des équipes sous-investies ou déconnectées. La présentation visuelle ne reflète pas la beauté de la destination. Des paysages à couper le souffle méritent une présentation de classe mondiale.',
+    p2t:'Coûts de Personnel Local Prohibitifs',p2d:'Embaucher un éditeur de contenu professionnel avec des compétences en design en Chine coûte au moins 10 000 RMB par mois — avant de trouver quelqu\'un qui comprend vraiment votre secteur et peut gérer le compte de manière cohérente.',
+    p3t:'Coûts des Salons — et Suivi',p3d:'Les salons exigent un investissement substantiel, mais le vrai défi commence après le salon : maintenir l\'engagement des acheteurs. Nous vous aidons également à localiser vos supports promotionnels.',
+    p4t:'Barrières d\'Enregistrement de Plateforme',p4d:'L\'enregistrement des plateformes de contenu chinoises — WeChat — nécessite une entité commerciale chinoise vérifiée. Cela constitue un véritable obstacle pour les entreprises étrangères.',
+    p5t:'Écart Culturel et Esthétique',p5d:'Les voyageurs chinois haut de gamme diffèrent grandement des clients occidentaux dans leurs parcours décisionnels, leurs goûts en matière de contenu et leurs habitudes de recherche d\'information. Même des visuels promotionnels bien conçus peinent à se diffuser efficacement via les comptes officiels WeChat ; des comptes mal gérés peuvent nuire directement à la réputation d\'une marque premium.',
+    p6t:'Seasonmap a Déjà Résolu Ces Problèmes',p6d:'Nous avons déjà résolu tous ces défis pour vous. De l\'enregistrement de plateforme aux opérations quotidiennes, notre partenariat supprime chaque obstacle.',
+    eb_t:'Votre Partenaire de Confiance en Chine',eb_d:'Seasonmap est une agence de voyage chinoise agréée — un <strong style="color:var(--gold);">partenaire fiable sur place</strong>. Nous apportons une expertise approfondie de l\'écosystème WeChat et une équipe recrutée parmi les principales agences de voyage chinoises.'},
+  why: {lb:'Pourquoi Nous Choisir',tl:'Nous Éliminons Chaque Barrière à l\'Entrée du Marché Chinois',ds:'De l\'enregistrement de plateforme aux opérations quotidiennes, de la création de contenu à la conversion de clients — chaque obstacle est géré par notre équipe.',
+    c1t:'Gestion Exclusive de Compte WeChat',c1d:'Nous enregistrons et gérons un compte dédié sous votre marque, publiant 52 articles de haute qualité par an.',
+    c2t:'Zéro Personnel Interne Requis',c2d:'Aucun employé supplémentaire, charges sociales ou procédures de conformité. Vous obtenez une équipe marketing Chine complète sans frais généraux.',
+    c3t:'Matériel de Marque Localisé et Support Salon',c3d:'Nous traduisons et imprimons professionnellement vos supports promotionnels pour le marché chinois. Une présence gratuite en salon par an incluse.',
+    c4t:'Transfert Direct de Prospects — Zéro Commission',c4d:'Toutes les demandes touristiques sont envoyées directement à votre compte WeChat, sans commission ni frais intermédiaires.',
+    c5t:'Un Pays, Un Partenaire — Véritable Exclusivité',c5d:'Nous coopérons uniquement avec votre entreprise pour vos projets de destination. Nous ne travaillerons jamais avec vos concurrents.',
+    c6t:'Localisation Chinoise Complète',c6d:'Nous traduisons professionnellement tous vos itinéraires et devis en chinois authentique, optimisé pour les habitudes de lecture des touristes chinois.',
+    c7t:'Équipe Bilingue Professionnelle',c7d:'Notre équipe maîtrise l\'anglais, assurant une communication fluide et efficace tout au long de notre coopération.',
+    c8t:'Performance Marketing Prouvée',c8d:'Zéro dépense publicitaire — notre base d\'abonnés est attirée organiquement par du contenu original de haute qualité.',
+    c9t:'Acquisition de Clients de Précision',c9d:'Valeurs de commande élevées, taux de réservation répétée exceptionnels et recommandations enthousiastes.',
+    c10t:'Agence de Voyage Agréée — Focus Haut de Gamme',c10d:'Nous sommes une agence de voyage professionnelle officiellement approuvée, spécialisée dans les itinéraires privés sur mesure.'},
+  exc: {lb:'Notre Promesse',tl:'Un Pays, Un Partenaire',ds:'Nous croyons aux partenariats profonds et ciblés. Pour chaque pays, nous travaillons exclusivement avec <strong style="color: var(--gold);">un seul opérateur</strong>.',
+    s1:'Partenaire Exclusif<br>par Pays',s2:'Abonnés Actifs<br>Compte WeChat',s3:'Familles Haut de<br>Gamme Servies',s4:'Clients via<br>Marketing WeChat',
+    eb_t:'Un Pays, Un Partenaire — Garanti',eb_d:'Nous travaillons avec <strong style="color:var(--gold);">un seul opérateur par pays</strong>. Une fois le créneau de votre pays réservé, nous ne collaborerons avec aucun concurrent. <span style="color:var(--gold); font-weight:600;">Premier arrivé, premier servi.</span>'},
+  svc: {lb:'Ce Que Nous Faisons',tl:'Représentation Complète du Marché Chinois',ds:'De l\'enregistrement WeChat au contenu quotidien, de la présence en salon au transfert de prospects — nous sommes votre partenaire opérationnel complet.',
+    c1n:'Compte Officiel WeChat',c1b:'Service Principal',c1d:'Nous enregistrons et gérons un compte WeChat dédié pour votre destination. 52 articles premium par an couvrant la culture locale, les guides de voyage et les services sur place.',
+    c2n:'Représentation en Salon',c2b:'Identité Exclusive',c2d:'Nous participons aux grands salons du voyage chinois exclusivement sous votre marque. Coût : ¥1 000/personne/jour. Tous les frais remboursés au coût réel.',
+    c3n:'Transfert Direct de Prospects',c3b:'Zéro Commission',c3d:'Chaque demande client concernant votre destination vous est transmise directement. Aucun frais intermédiaire, aucune commission.',
+    c4n:'Contenu Chinois Premium et Design d\'Itinéraire',c4b:'Localisation Haut de Gamme',c4d:'Nous créons des <strong>itinéraires conçus pour les voyageurs chinois</strong> — construits autour des préférences chinoises. Nous produisons également des <strong>documents en chinois premium</strong>.',
+    c5n:'Tranquillité d\'Esprit Totale',c5b:'',c5d:'Aucun personnel à embaucher. Aucune charge sociale. Aucun frais de déplacement. Notre équipe bilingue gère tout.'},
+  hw: {lb:'Processus d\'Inscription',tl:'Configuration du Compte Officiel WeChat',ds:'La configuration d\'un compte WeChat en tant qu\'entité étrangère est complexe. Nous gérons l\'ensemble du processus.',
+    o1l:'Option 1 · Recommandée',o1t:'Vous Avez une Société Enregistrée en Chine',o1d:'Chemin le plus rapide vers la vérification complète. Propriété sous votre entité chinoise.',
+    o1s1:'Collecte de Documents',o1s1d:'Vous fournissez la licence commerciale, la pièce d\'identité du représentant légal et les documents de certification.',
+    o1s2:'Inscription et Vérification',o1s2d:'Nous complétons l\'inscription du compte et la vérification officielle WeChat.',
+    o1s3:'Configuration des Autorisations',o1s3d:'Nous configurons l\'accès au compte. La propriété reste à votre entreprise.',
+    o1s4:'Opération Officielle',o1s4d:'Nous fournissons le contenu quotidien, le design et les rapports de données mensuels.',
+    o1s5:'Support Continu',o1s5d:'Examen régulier du contenu, ajustement des fonctions et renouvellement annuel.',
+    o2l:'Option 2',o2t:'Pas Encore de Société Chinoise',o2d:'Deux voies disponibles — compte de service overseas standard ou compte personnel à lancement rapide.',
+    o2s1:'Standard : Inscrire un Compte de Service Overseas',o2s1d:'Nous collectons vos documents d\'entreprise étrangère.',
+    o2s2:'Configuration des Autorisations',o2s2d:'Nous configurons les autorisations. Le compte appartient à votre agence de voyage étrangère.',
+    o2s3:'Temporaire : Lancement Rapide Compte Personnel',o2s3d:'Nous enregistrons un compte personnel pour la publication immédiate de contenu. Délai : 3 jours ouvrables pour l\'enregistrement et l\'approbation, 1 jour ouvrable pour la publication du contenu.',
+    o2s4:'Migration Quand Prêt',o2s4d:'Une fois votre société chinoise établie, nous migrons tout le contenu vers votre nouveau compte.',
+    note:'<strong style="color:var(--gold);">Note :</strong> Si vous avez déjà un compte WeChat mais n\'êtes pas satisfait de son fonctionnement, il vous suffit d\'accorder l\'accès à notre équipe. Chaque action est tracée.'},
+  cs: {lb:'Études de Cas',tl:'Résultats Prouvés',ds:'Nos comptes gérés fonctionnent de six mois à trois ans. Tout le trafic est organique ; de nombreux articles atteignent des milliers de lectures et génèrent de vraies commandes.'},
+  pr: {lb:'Plans de Partenariat',tl:'Investissement Transparent',ds:'Tarification simple et directe, sans frais cachés. Nos revenus proviennent du partenariat — jamais de vos transactions clients.',
+    roi_t:'Retour sur Investissement',roi_m:'Une année de partenariat coûte moins que <strong style="color: var(--gold);">deux mois de salaire</strong> d\'un employé local en Chine. Même <strong style="color: var(--gold);">une seule réservation</strong> d\'une famille haut de gamme couvre la totalité de vos frais annuels.',
+    roi_s:'Chaque réservation suivante est un pur profit. La valeur de marque que vous construisez sur le marché chinois dépasse largement les frais de partenariat.'},
+  cmp: {lb:'Pourquoi Seasonmap',tl:'Y Aller Seul vs. Partenariat avec Seasonmap',ds:'Les chiffres parlent d\'eux-mêmes.',
+    h1:'Entrer en Chine Seul',h2:'Partenariat avec Seasonmap',
+    r1a:'Embaucher du personnel local : ≥ ¥300 000/an',r1b:'Aucun employé — zéro coût de personnel',
+    r2a:'Charges sociales, avantages, conformité',r2b:'Zéro charge sociale',
+    r3a:'Voyages fondateur/cadres : vols + hôtels',r3b:'Aucun déplacement en Chine requis',
+    r4a:'Démarrage à froid : 12-24 mois pour créer une audience',r4b:'Accès immédiat à notre lectorat haut de gamme établi',
+    r5a:'Candidatures complexes aux salons',r5b:'Entièrement délégué à Seasonmap',
+    r6a:'Confiance construite lentement',r6b:'Profitez de la réputation de Seasonmap',
+    r7a:'Partenariats multiples diluent l\'exposition',r7b:'Un pays, un partenaire — accès exclusif',
+    r8a:'Engagement incertain du partenaire',r8b:'Un <strong style="color:var(--gold);">partenaire fiable</strong> — nous tenons nos promesses'},
+  tst: {q:'Nous ne faisons pas du business de trafic. Nous faisons du business de confiance.',a:'— Seasonmap, Votre Partenaire de Confiance en Chine'},
+  cta: {tl:'Prêt à Entrer sur le Marché Chinois ?',st:'Chaque pays n\'a qu\'un seul créneau de partenariat. Sécurisez le vôtre avant que quelqu\'un d\'autre ne le fasse.',btn:'Commencer la Conversation'},
+  ftr: {bd:'SEASONMAP',ds:'Agence de voyage chinoise agréée et partenaire opérationnel premium. Un pays, un partenaire.',
+    h1:'Services',h2:'Entreprise',h3:'Contact',
+    s1:'Gestion WeChat',s2:'Représentation Salon',s3:'Transfert Prospects',s4:'Localisation Chinoise',
+    c1:'À Propos',c2:'Études de Cas',c3:'Tarifs',c4:'Contact',
+    ct1:'WeChat: Elan-zhong',ct2:'E-mail: seasonmap@163.com',ct3:'Guangzhou, Chine',
+    bt:'© 2026 Seasonmap. Tous droits réservés.',b2:'Guangzhou International Trade Centre, Tianhe'}
+},
+ru: {
+  nav: {sv:'Услуги',wu:'Почему Мы',hw:'Как Работаем',cs:'Кейсы',pr:'Цены',gs:'Начать'},
+  hero: {bd:'🌏 Одна Страна · Один Эксклюзивный Партнер',t1:'Мгновенный Доступ к',t2:'Туристическому Рынку Китая',st:'Премиум управление контентом WeChat для международных туристических агентств | Высокая конверсия с проверенными результатами. Наша общая конверсия бронирований превышает',pct:'10,24%',v1:'Экономия/Год<br>против найма',v2:'Дней',v3:'До Запуска<br>WeChat + Контент',v4:'Активных Подписчиков<br>WeChat Готовы',v5:'Сотрудников<br>Полный Аутсорсинг',cta1:'Изучить Партнерство',cta2:'Как Это Работает',sc:'Прокрутить'},
+  opp: {lb:'Возможность',tl:'В Китае Официальный Аккаунт WeChat — Ваша Лучшая Витрина Бренда',ds:'Рынок выездного туризма Китая огромен — более 130 миллионов путешественников в год. С Seasonmap как вашим партнером на месте, платформы, контент и лиды становятся простыми и доступными.',
+    p1t:'Недооцененный Потенциал Платформы',p1d:'Многие зарубежные туристические организации уже зарегистрировали аккаунты WeChat, но их контент управляется недостаточно инвестированными командами. Визуальное оформление не отражает красоту направления.',
+    p2t:'Запретительные Расходы на Местный Персонал',p2d:'Найм профессионального редактора контента с навыками дизайна в Китае стоит не менее 10 000 юаней в месяц на человека.',
+    p3t:'Расходы на Выставки и Последующие Действия',p3d:'Выставки требуют значительных инвестиций, но настоящая задача начинается после: поддержание связи с новыми покупателями.',
+    p4t:'Барьеры Регистрации Платформы',p4d:'Регистрация ключевых китайских контент-платформ требует верифицированного китайского юридического лица. Это реальное препятствие для зарубежных предприятий.',
+    p5t:'Культурный и Эстетический Разрыв',p5d:'Китайские премиум-путешественники сильно отличаются от западных клиентов по путям принятия решений, вкусам к контенту и привычкам поиска информации. Даже хорошо оформленные рекламные визуальные материалы не могут эффективно распространяться через официальные аккаунты WeChat; небрежно управляемые аккаунты могут напрямую навредить репутации премиум-бренда.',
+    p6t:'Seasonmap Уже Решил Эти Проблемы',p6d:'Мы уже решили все эти задачи за вас. Наше партнерство устраняет каждый барьер между вашим брендом и китайским путешественником.',
+    eb_t:'Ваш Надежный Партнер в Китае',eb_d:'Seasonmap — лицензированное китайское туристическое агентство, <strong style="color:var(--gold);">надежный партнер на месте</strong>. Мы приносим глубокую экспертизу экосистемы WeChat.'},
+  why: {lb:'Почему Выбирают Нас',tl:'Мы Устраняем Каждый Барьер для Входа на Рынок Китая',ds:'От регистрации платформы до ежедневных операций, от создания контента до конверсии клиентов — каждое препятствие обрабатывается нашей командой.',
+    c1t:'Эксклюзивное Управление Аккаунтом WeChat',c1d:'Мы регистрируем и ведем выделенный аккаунт под вашим брендом, публикуя 52 качественные статьи в год.',
+    c2t:'Ноль Внутреннего Персонала',c2d:'Никаких дополнительных сотрудников, социальных отчислений или процедур соответствия. Вы получаете полную маркетинговую команду для Китая.',
+    c3t:'Локализованные Материалы и Поддержка Выставок',c3d:'Мы переводим и профессионально печатаем ваши рекламные материалы для китайского рынка.',
+    c4t:'Прямая Передача Лидов — Ноль Комиссии',c4d:'Все туристические запросы направляются напрямую вам, без комиссий и промежуточных сборов.',
+    c5t:'Одна Страна, Один Партнер — Подлинная Эксклюзивность',c5d:'Мы сотрудничаем только с вашей компанией по проектам вашего направления.',
+    c6t:'Полная Китайская Локализация',c6d:'Мы профессионально переводим все ваши маршруты и предложения на аутентичный китайский язык.',
+    c7t:'Профессиональная Двуязычная Команда',c7d:'Наши сотрудники свободно владеют английским, обеспечивая беспрепятственную коммуникацию.',
+    c8t:'Доказанная Маркетинговая Эффективность',c8d:'Ноль рекламных расходов — вся база подписчиков привлечена органически оригинальным качественным контентом.',
+    c9t:'Точное Привлечение Клиентов',c9d:'Высокие средние чеки, исключительные показатели повторных бронирований.',
+    c10t:'Лицензированное Турагентство — Фокус на Премиум',c10d:'Мы профессиональное турагентство, официально одобренное туристическим бюро Китая.'},
+  exc: {lb:'Наше Обещание',tl:'Одна Страна, Один Партнер',ds:'Мы верим в глубокие, сфокусированные партнерства. Для каждой страны мы работаем исключительно с <strong style="color: var(--gold);">одним туроператором</strong>.',
+    s1:'Эксклюзивный Партнер<br>на Страну',s2:'Активных Подписчиков<br>WeChat',s3:'Премиум<br>Семей Обслужено',s4:'Клиентов через<br>Маркетинг WeChat',
+    eb_t:'Одна Страна, Один Партнер — Гарантировано',eb_d:'Мы работаем с <strong style="color:var(--gold);">только одним туроператором на страну</strong>. Как только слот вашей страны занят, мы не будем сотрудничать с конкурентами. <span style="color:var(--gold); font-weight:600;">Первым пришел — первым обслужен.</span>'},
+  svc: {lb:'Что Мы Делаем',tl:'Полное Представительство на Рынке Китая',ds:'От регистрации WeChat до ежедневного контента, от присутствия на выставках до передачи лидов — мы ваш полный операционный партнер.',
+    c1n:'Официальный Аккаунт WeChat',c1b:'Основная Услуга',c1d:'Мы регистрируем и управляем выделенным аккаунтом WeChat для вашего направления. 52 премиум статьи в год.',
+    c2n:'Представительство на Выставках',c2b:'Эксклюзивная Идентичность',c2d:'Мы посещаем крупные китайские туристические выставки исключительно под вашим брендом. Стоимость: ¥1 000/чел/день.',
+    c3n:'Прямая Передача Лидов',c3b:'Ноль Комиссии',c3d:'Каждый запрос клиента о вашем направлении передается напрямую вам. Никаких посреднических сборов.',
+    c4n:'Премиум Китайский Контент и Дизайн Маршрутов',c4b:'Премиум Локализация',c4d:'Мы создаем <strong>маршруты, разработанные для китайских путешественников</strong>. Также производим <strong>премиум документы на китайском</strong>.',
+    c5n:'Полное Спокойствие',c5b:'',c5d:'Никакого найма персонала. Никаких социальных отчислений. Наша двуязычная команда справляется со всем.'},
+  hw: {lb:'Процесс Регистрации',tl:'Настройка Официального Аккаунта WeChat',ds:'Настройка аккаунта WeChat как иностранного юрлица сложна. Мы управляем всем процессом.',
+    o1l:'Вариант 1 · Рекомендуется',o1t:'У Вас Есть Зарегистрированная Компания в Китае',o1d:'Самый быстрый путь к полной верификации. Право собственности под вашим китайским юрлицом.',
+    o1s1:'Сбор Документов',o1s1d:'Вы предоставляете бизнес-лицензию, удостоверение личности законного представителя и сертификационные документы.',
+    o1s2:'Регистрация и Верификация',o1s2d:'Мы завершаем регистрацию аккаунта и официальную верификацию WeChat.',
+    o1s3:'Настройка Разрешений',o1s3d:'Мы настраиваем доступ к аккаунту. Право собственности остается у вашей компании.',
+    o1s4:'Официальная Эксплуатация',o1s4d:'Мы предоставляем ежедневный контент, дизайн и ежемесячные отчеты.',
+    o1s5:'Постоянная Поддержка',o1s5d:'Регулярный обзор контента и ежегодное продление сертификации.',
+    o2l:'Вариант 2',o2t:'Пока Нет Китайской Компании',o2d:'Два пути — стандартный зарубежный сервисный аккаунт или быстрый запуск личного аккаунта.',
+    o2s1:'Стандарт: Регистрация Зарубежного Сервисного Аккаунта',o2s1d:'Мы собираем документы вашей зарубежной компании.',
+    o2s2:'Настройка Разрешений',o2s2d:'Аккаунт принадлежит вашему зарубежному турагентству.',
+    o2s3:'Временно: Быстрый Запуск Личного Аккаунта',o2s3d:'Мы регистрируем личный аккаунт для немедленной публикации контента. Срок: 3 рабочих дня на регистрацию и одобрение, 1 рабочий день на публикацию контента.',
+    o2s4:'Миграция При Готовности',o2s4d:'После создания китайской компании мы переносим весь контент в новый корпоративный аккаунт.',
+    note:'<strong style="color:var(--gold);">Примечание:</strong> Если у вас уже есть аккаунт WeChat, но вы недовольны его работой, просто предоставьте нашей команде доступ. Каждое действие отслеживается.'},
+  cs: {lb:'Кейсы',tl:'Доказанные Результаты',ds:'Наши управляемые аккаунты работают от полугода до трех лет. Весь трафик органический; многие статьи набирают тысячи прочтений и приносят реальные заказы.'},
+  pr: {lb:'Планы Партнерства',tl:'Прозрачные Инвестиции',ds:'Простое ценообразование без скрытых платежей. Наш доход поступает от партнерства, а не от ваших клиентских транзакций.',
+    roi_t:'Возврат на Инвестиции',roi_m:'Год партнерства стоит меньше, чем <strong style="color: var(--gold);">два месяца зарплаты</strong> местного сотрудника в Китае. Даже <strong style="color: var(--gold);">одно бронирование</strong> от премиум-семьи покрывает годовую плату.',
+    roi_s:'Каждое последующее бронирование — чистая прибыль. Капитал бренда, который вы строите на китайском рынке, имеет стратегическую ценность.'},
+  cmp: {lb:'Почему Seasonmap',tl:'Самостоятельно vs. Партнерство с Seasonmap',ds:'Цифры говорят сами за себя.',
+    h1:'Вход в Китай Самостоятельно',h2:'Партнерство с Seasonmap',
+    r1a:'Найм местного персонала: ≥ ¥300 000/год',r1b:'Сотрудники не нужны — ноль затрат',
+    r2a:'Соцстрах, льготы, compliance',r2b:'Ноль социальных обязательств',
+    r3a:'Командировки: перелеты + отели',r3b:'Поездки в Китай не требуются',
+    r4a:'Холодный старт: 12-24 месяца',r4b:'Мгновенный доступ к нашей аудитории',
+    r5a:'Сложные заявки на выставки',r5b:'Полностью делегировано Seasonmap',
+    r6a:'Медленное накопление доверия',r6b:'Используйте репутацию Seasonmap',
+    r7a:'Множественные каналы размывают бренд',r7b:'Одна страна, один партнер — эксклюзив',
+    r8a:'Неопределенные обязательства партнера',r8b:'<strong style="color:var(--gold);">Надежный партнер</strong> — мы выполняем обещания'},
+  tst: {q:'Мы не занимаемся трафик-бизнесом. Мы занимаемся бизнесом доверия.',a:'— Seasonmap, Ваш Надежный Партнер в Китае'},
+  cta: {tl:'Готовы Выйти на Китайский Рынок?',st:'У каждой страны только один слот партнерства. Зарезервируйте свой, пока это не сделал кто-то другой.',btn:'Начать Разговор'},
+  ftr: {bd:'SEASONMAP',ds:'Лицензированное китайское турагентство и премиум операционный партнер. Одна страна, один партнер.',
+    h1:'Услуги',h2:'Компания',h3:'Контакты',
+    s1:'Управление WeChat',s2:'Представительство',s3:'Передача Лидов',s4:'Локализация',
+    c1:'О Нас',c2:'Кейсы',c3:'Цены',c4:'Контакты',
+    ct1:'WeChat: Elan-zhong',ct2:'E-mail: seasonmap@163.com',ct3:'Гуанчжоу, Китай',
+    bt:'© 2026 Seasonmap. Все права защищены.',b2:'Guangzhou International Trade Centre, Tianhe'}
+},
+ar: {
+  nav: {sv:'الخدمات',wu:'لماذا نحن',hw:'كيف نعمل',cs:'دراسات حالة',pr:'الأسعار',gs:'ابدأ الآن'},
+  hero: {bd:'🌏 دولة واحدة · شريك حصري واحد',t1:'وصول فوري إلى',t2:'سوق السفر الصيني',st:'إدارة محتوى متميزة على WeChat لوكالات السفر العالمية | تحويل عالي مع نتائج مثبتة. معدل التحويل الإجمالي للحجوزات يتجاوز',pct:'10.24%',v1:'توفير/سنوياً<br>مقابل التوظيف',v2:'يوم',v3:'للانطلاق<br>WeChat + المحتوى',v4:'متابع نشط<br>على WeChat جاهز',v5:'موظف للتوظيف<br>تعهيد كامل',cta1:'استكشف الشراكة',cta2:'كيف نعمل',sc:'مرر للأسفل'},
+  opp: {lb:'الفرصة',tl:'في الصين، حساب WeChat الرسمي هو أفضل واجهة لعلامتك التجارية',ds:'سوق السفر الصيني الصادر ضخم — أكثر من 130 مليون مسافر سنوياً. مع Seasonmap كشريكك المحلي، تصبح المنصات والمحتوى والعملاء المحتملين بسيطة وسهلة المنال.',
+    p1t:'إمكانات المنصة غير المقدرة',p1d:'العديد من مكاتب السياحة ووكالات السفر overseas سجلت حسابات WeChat لكن محتواها يُدار بفرق غير مستثمرة. التصميم البصري لا يعكس جمال الوجهة.',
+    p2t:'تكاليف التوظيف المحلي الباهظة',p2d:'توظيف محرر محتوى محترف بمهارات تصميم في الصين يكلف 10,000 يوان شهرياً على الأقل.',
+    p3t:'تكاليف المعارض — وما بعدها',p3d:'المعارض تتطلب استثماراً كبيراً، لكن التحدي الحقيقي يبدأ بعد المعرض: الحفاظ على تفاعل المشترين الجدد.',
+    p4t:'حواجز تسجيل المنصات',p4d:'تسجيل منصات المحتوى الصينية الرئيسية يتطلب كياناً تجارياً صينياً موثقاً. هذا عائق حقيقي للشركات الأجنبية.',
+    p5t:'الفجوة الثقافية والجمالية',p5d:'يختلف المسافرون الصينيون الفاخرون بشكل كبير عن العملاء الغربيين في مسارات اتخاذ القرار وأذواق المحتوى وعادات البحث عن المعلومات. حتى المواد الترويجية المصممة جيداً تفشل في الانتشار بكفاءة عبر حسابات WeChat الرسمية؛ الحسابات المدارة بإهمال قد تضر مباشرة بسمعة العلامة التجارية الفاخرة.',
+    p6t:'Seasonmap حلت هذه المشكلات بالفعل',p6d:'لقد حللنا كل هذه التحديات نيابة عنك. شراكتنا تزيل كل حاجز بين علامتك التجارية والمسافر الصيني.',
+    eb_t:'شريكك الموثوق في الصين',eb_d:'Seasonmap هي وكالة سفر صينية مرخصة — <strong style="color:var(--gold);">شريك موثوق على الأرض</strong>. نقدم خبرة عميقة في نظام WeChat البيئي.'},
+  why: {lb:'لماذا تختارنا',tl:'نزيل كل حاجز لدخول السوق الصيني',ds:'من تسجيل المنصة إلى العمليات اليومية، من إنشاء المحتوى إلى تحويل العملاء — كل عقبة يتعامل معها فريقنا.',
+    c1t:'إدارة حصرية لحساب WeChat',c1d:'نسجل وندير حساباً مخصصاً تحت علامتك التجارية، ننشر 52 مقالاً عالي الجودة سنوياً.',
+    c2t:'صفر موظفين داخليين مطلوبين',c2d:'لا موظفين إضافيين، ولا رسوم تأمين اجتماعي. تحصل على فريق تسويق صيني كامل بدون تكاليف إضافية.',
+    c3t:'مواد العلامة التجارية المعدلة محلياً ودعم المعارض',c3d:'نترجم ونطبع موادك الترويجية بشكل احترافي للسوق الصيني.',
+    c4t:'تحويل مباشر للعملاء — صفر عمولة',c4d:'جميع استفسارات السياح تُرسل مباشرة إلى حساب WeChat الخاص بك، بدون عمولات أو رسوم وسيطة.',
+    c5t:'دولة واحدة، شريك واحد — حصرية حقيقية',c5d:'نتعاون فقط مع شركتك لمشاريع وجهتك السياحية. لن نعمل أبداً مع منافسيك.',
+    c6t:'تعريب صيني كامل',c6d:'نترجم بشكل احترافي جميع مساراتك وعروضك إلى اللغة الصينية الأصيلة.',
+    c7t:'فريق ثنائي اللغة محترف',c7d:'أعضاء فريقنا يتقنون اللغة الإنجليزية، مما يضمن تواصلاً سلساً وفعالاً.',
+    c8t:'أداء تسويقي مثبت',c8d:'صفر إنفاق إعلاني — قاعدة متابعينا بالكامل تجذب عضوياً بالمحتوى الأصلي عالي الجودة.',
+    c9t:'اكتساب دقيق للعملاء',c9d:'قيم طلبات عالية، معدلات حجز متكرر استثنائية، وتوصيات شفهية متحمسة.',
+    c10t:'وكالة سفر مرخصة — تركيز على الفئة الفاخرة',c10d:'نحن وكالة سفر محترفة معتمدة رسمياً من مكتب السياحة الصيني.'},
+  exc: {lb:'وعدنا',tl:'دولة واحدة، شريك واحد',ds:'نؤمن بالشراكات العميقة والمركزة. لكل دولة، نعمل حصرياً مع <strong style="color: var(--gold);">مشغل سفر واحد</strong>.',
+    s1:'شريك حصري<br>لكل دولة',s2:'متابع نشط<br>لحساب WeChat',s3:'عائلة فاخرة<br>تمت خدمتها',s4:'عميل عبر<br>تسويق WeChat',
+    eb_t:'دولة واحدة، شريك واحد — مضمون',eb_d:'نعمل مع <strong style="color:var(--gold);">مشغل سفر واحد فقط لكل دولة</strong>. بمجرد حجز مقعد بلدك، لن نتعاون مع أي منافس. <span style="color:var(--gold); font-weight:600;">من يأتي أولاً يُخدم أولاً.</span>'},
+  svc: {lb:'ماذا نقدم',tl:'تمثيل كامل للسوق الصيني',ds:'من تسجيل WeChat إلى المحتوى اليومي، من حضور المعارض إلى تحويل العملاء — نحن شريكك التشغيلي الكامل.',
+    c1n:'حساب WeChat الرسمي',c1b:'الخدمة الأساسية',c1d:'نسجل وندير حساب WeChat مخصص لوجهتك. 52 مقالاً متميزاً سنوياً.',
+    c2n:'تمثيل في المعارض',c2b:'هوية حصرية',c2d:'نحضر المعارض السياحية الصينية الكبرى حصرياً تحت علامتك التجارية. التكلفة: ¥1,000/شخص/يوم.',
+    c3n:'تحويل مباشر للعملاء',c3b:'صفر عمولة',c3d:'كل استفسار عميل عن وجهتك يُحول مباشرة إليك. بدون رسوم وسيطة.',
+    c4n:'محتوى صيني متميز وتصميم مسارات',c4b:'تعريب فاخر',c4d:'نصنع <strong>مسارات مصممة للمسافرين الصينيين</strong>. ننتج أيضاً <strong>وثائق صينية متميزة</strong>.',
+    c5n:'راحة بال كاملة',c5b:'',c5d:'لا توظيف. لا تأمين اجتماعي. لا تكاليف سفر. فريقنا ثنائي اللغة يتولى كل شيء.'},
+  hw: {lb:'عملية التسجيل',tl:'إعداد حساب WeChat الرسمي',ds:'إعداد حساب WeChat ككيان أجنبي معقد. ندير العملية بأكملها.',
+    o1l:'الخيار 1 · موصى به',o1t:'لديك شركة مسجلة في الصين',o1d:'أسرع طريق للتحقق الكامل والوصول للميزات. الملكية الكاملة تحت كيانك الصيني.',
+    o1s1:'جمع المستندات',o1s1d:'تقدم رخصة العمل، هوية الممثل القانوني.',
+    o1s2:'التسجيل والتحقق',o1s2d:'نكمل تسجيل الحساب والتحقق الرسمي من WeChat.',
+    o1s3:'تهيئة الصلاحيات',o1s3d:'نضبط صلاحيات الوصول. الملكية تبقى لشركتك.',
+    o1s4:'التشغيل الرسمي',o1s4d:'نقدم المحتوى اليومي، التصميم، وتقارير البيانات الشهرية.',
+    o1s5:'الدعم المستمر',o1s5d:'مراجعة منتظمة للمحتوى، تعديل الوظائف، وتجديد الشهادة السنوية.',
+    o2l:'الخيار 2',o2t:'لا توجد شركة صينية بعد',o2d:'مساران متاحان — حساب خدمة overseas قياسي أو حساب شخصي سريع الإطلاق.',
+    o2s1:'قياسي: تسجيل حساب خدمة overseas',o2s1d:'نجمع مستندات شركتك الخارجية ومعلومات الاتصال.',
+    o2s2:'إعداد الصلاحيات',o2s2d:'الحساب ملك لوكالة السفر الخارجية الخاصة بك.',
+    o2s3:'مؤقت: إطلاق سريع بحساب شخصي',o2s3d:'نسجل حساباً شخصياً لنشر المحتوى الفوري والتفاعل مع المتابعين. وقت التنفيذ: 3 أيام عمل للتسجيل والموافقة الرسمية، يوم عمل واحد لنشر المحتوى.',
+    o2s4:'الترحيل عند الاستعداد',o2s4d:'بمجرد إنشاء شركتك الصينية، ننقل كل المحتوى والمتابعين إلى حسابك المؤسسي الجديد.',
+    note:'<strong style="color:var(--gold);">ملاحظة:</strong> إذا كان لديك حساب WeChat بالفعل ولكنك غير راضٍ عن تشغيله، فقط امنح فريقنا صلاحية الوصول. كل إجراء مسجل بتتبع الاسم الحقيقي.'},
+  cs: {lb:'دراسات حالة',tl:'نتائج مثبتة',ds:'حساباتنا المدارة تعمل من نصف عام إلى ثلاث سنوات. كل الحركة عضوية؛ العديد من المقالات تحقق آلاف القراءات وتجلب طلبات حقيقية.'},
+  pr: {lb:'خطط الشراكة',tl:'استثمار شفاف',ds:'تسعير بسيط ومباشر بدون رسوم مخفية. دخلنا يأتي من الشراكة — وليس من معاملات عملائك.',
+    roi_t:'العائد على الاستثمار',roi_m:'سنة من الشراكة تكلف أقل من <strong style="color: var(--gold);">راتب شهرين</strong> لموظف محلي في الصين. حتى <strong style="color: var(--gold);">حجز واحد</strong> من عائلة فاخرة يغطي رسومك السنوية بالكامل.',
+    roi_s:'كل حجز لاحق هو ربح صافٍ. قيمة العلامة التجارية التي تبنيها في السوق الصيني تحمل قيمة استراتيجية تتجاوز رسوم الشراكة.'},
+  cmp: {lb:'لماذا Seasonmap',tl:'الدخول بمفردك مقابل الشراكة مع Seasonmap',ds:'الأرقام تتحدث عن نفسها.',
+    h1:'دخول الصين بمفردك',h2:'الشراكة مع Seasonmap',
+    r1a:'توظيف موظفين محليين: ≥ ¥300,000/سنة',r1b:'لا موظفين — صفر تكاليف توظيف',
+    r2a:'تأمين اجتماعي، مزايا، التزامات امتثال',r2b:'صفر أعباء اجتماعية أو امتثال',
+    r3a:'سفر المؤسس/المدير: طيران + فنادق',r3b:'لا حاجة للسفر إلى الصين',
+    r4a:'بداية باردة: 12-24 شهراً لبناء المتابعين',r4b:'وصول فوري إلى جمهورنا الراقي',
+    r5a:'طلبات معارض معقدة وتصميم أجنحة',r5b:'مفوض بالكامل لـ Seasonmap',
+    r6a:'ثقة تُبنى ببطء عبر السمعة',r6b:'استفد من سمعة Seasonmap مع 300+ عائلة',
+    r7a:'شراكات متعددة تخفف ظهور العلامة',r7b:'دولة واحدة، شريك واحد — وصول حصري',
+    r8a:'التزام شريك غير مؤكد',r8b:'<strong style="color:var(--gold);">شريك موثوق ومسؤول</strong> — نفي بوعودنا'},
+  tst: {q:'نحن لا نمارس أعمال المرور. نحن نمارس أعمال الثقة.',a:'— Seasonmap، شريكك الموثوق في الصين'},
+  cta: {tl:'مستعد لدخول السوق الصيني؟',st:'كل دولة لديها مقعد شراكة واحد فقط. احجز مقعدك قبل أن يفعله شخص آخر.',btn:'ابدأ المحادثة'},
+  ftr: {bd:'SEASONMAP',ds:'وكالة سفر صينية مرخصة وشريك تشغيلي متميز. دولة واحدة، شريك واحد.',
+    h1:'الخدمات',h2:'الشركة',h3:'اتصل',
+    s1:'إدارة WeChat',s2:'تمثيل المعارض',s3:'تحويل العملاء',s4:'التعريب الصيني',
+    c1:'من نحن',c2:'دراسات حالة',c3:'الأسعار',c4:'اتصل',
+    ct1:'WeChat: Elan-zhong',ct2:'البريد الإلكتروني: seasonmap@163.com',ct3:'قوانغتشو، الصين',
+    bt:'© 2026 Seasonmap. جميع الحقوق محفوظة.',b2:'مركز قوانغتشو التجاري الدولي، تيانخه'}
+},
+es: {
+  nav: {sv:'Servicios',wu:'Por Qué Nosotros',hw:'Cómo Funciona',cs:'Casos de Éxito',pr:'Precios',gs:'Comenzar'},
+  hero: {bd:'🌏 Un País · Un Socio Exclusivo',t1:'Acceso Inmediato al',t2:'Mercado de Viajes Chino',st:'Gestión Premium de Contenido WeChat para Agencias de Viajes Globales | Alta Conversión con Resultados Verificados. Nuestra tasa de conversión global supera el',pct:'10,24%',v1:'Ahorro/Año<br>vs. Contratar',v2:'Días',v3:'Para Estar Operativo<br>WeChat + Contenido',v4:'Seguidores Activos<br>de WeChat Listos',v5:'Personal a Contratar<br>Externalización Total',cta1:'Explorar Alianza',cta2:'Cómo Funciona',sc:'Desplazar'},
+  opp: {lb:'La Oportunidad',tl:'En China, una Cuenta Oficial de WeChat Es Su Mejor Escaparate de Marca',ds:'El mercado de viajes emisores de China es enorme — más de 130 millones de viajeros al año. Con Seasonmap como su socio local, las plataformas, el contenido y los clientes potenciales se vuelven simples y accesibles.',
+    p1t:'Potencial de Plataforma Subestimado',p1d:'Muchas oficinas de turismo ya han registrado cuentas de WeChat, pero su contenido es operado por equipos con poca inversión. El diseño visual no refleja la belleza del destino.',
+    p2t:'Costos Prohibitivos de Personal Local',p2d:'Contratar un editor de contenido profesional con habilidades de diseño en China cuesta al menos 10,000 RMB al mes por persona.',
+    p3t:'Costos de Ferias — y el Seguimiento',p3d:'Las ferias requieren una inversión sustancial, pero el verdadero desafío comienza después: mantener el compromiso de los compradores.',
+    p4t:'Barreras de Registro de Plataformas',p4d:'Registrar plataformas de contenido chinas requiere una entidad comercial china verificada. Esto presenta un obstáculo real para las empresas extranjeras.',
+    p5t:'Brecha Cultural y Estética',p5d:'Los viajeros chinos de alto nivel difieren enormemente de los clientes occidentales en sus rutas de decisión, gustos de contenido y hábitos de búsqueda de información. Incluso los materiales visuales promocionales bien diseñados no logran difundirse eficazmente a través de las Cuentas Oficiales de WeChat; las cuentas mal gestionadas pueden dañar directamente la reputación de una marca premium.',
+    p6t:'Seasonmap Ya Ha Resuelto Esto',p6d:'Ya hemos resuelto todos estos desafíos por usted. Nuestra alianza elimina cada barrera entre su marca y el viajero chino.',
+    eb_t:'Su Socio de Confianza en China',eb_d:'Seasonmap es una agencia de viajes china autorizada — un <strong style="color:var(--gold);">socio confiable sobre el terreno</strong>. Aportamos profunda experiencia en el ecosistema WeChat.'},
+  why: {lb:'Por Qué Elegirnos',tl:'Eliminamos Cada Barrera para Entrar al Mercado Chino',ds:'Desde el registro de plataformas hasta las operaciones diarias, desde la creación de contenido hasta la conversión de clientes — cada obstáculo es manejado por nuestro equipo.',
+    c1t:'Operación Exclusiva de Cuenta WeChat',c1d:'Registramos y operamos una cuenta dedicada bajo su marca, publicando 52 artículos de alta calidad al año.',
+    c2t:'Cero Personal Interno Requerido',c2d:'Sin empleados adicionales, cargas sociales ni procedimientos de cumplimiento. Obtiene un equipo de marketing completo para China.',
+    c3t:'Material de Marca Localizado y Apoyo en Ferias',c3d:'Traducimos e imprimimos profesionalmente sus materiales promocionales para el mercado chino.',
+    c4t:'Reenvío Directo de Clientes — Cero Comisión',c4d:'Todas las consultas turísticas se envían directamente a su WeChat, sin comisiones ni cargos intermedios.',
+    c5t:'Un País, Un Socio — Exclusividad Verdadera',c5d:'Solo cooperamos con su empresa para sus proyectos de destino. Nunca trabajaremos con sus competidores.',
+    c6t:'Localización China Completa',c6d:'Traducimos profesionalmente todas sus rutas e itinerarios al chino auténtico.',
+    c7t:'Equipo Bilingüe Profesional',c7d:'Nuestro equipo domina el inglés, asegurando una comunicación fluida y eficiente.',
+    c8t:'Rendimiento de Marketing Probado',c8d:'Cero gasto publicitario — toda nuestra base de seguidores es atraída orgánicamente por contenido original de alta calidad.',
+    c9t:'Adquisición de Clientes de Precisión',c9d:'Altos valores de pedido, tasas de repetición excepcionales y recomendaciones entusiastas.',
+    c10t:'Agencia de Viajes Autorizada — Enfoque de Alto Nivel',c10d:'Somos una agencia de viajes profesional aprobada oficialmente por la oficina de turismo de China.'},
+  exc: {lb:'Nuestra Promesa',tl:'Un País, Un Socio',ds:'Creemos en alianzas profundas y enfocadas. Para cada país, trabajamos exclusivamente con <strong style="color: var(--gold);">un operador turístico</strong>.',
+    s1:'Socio Exclusivo<br>por País',s2:'Seguidores Activos<br>de Cuenta WeChat',s3:'Familias de Alto<br>Patrimonio Atendidas',s4:'Clientes vía<br>Marketing WeChat',
+    eb_t:'Un País, Un Socio — Garantizado',eb_d:'Trabajamos con <strong style="color:var(--gold);">solo un operador turístico por país</strong>. Una vez que el cupo de su país esté ocupado, no colaboraremos con ningún competidor. <span style="color:var(--gold); font-weight:600;">Por orden de llegada.</span>'},
+  svc: {lb:'Qué Hacemos',tl:'Representación Completa del Mercado Chino',ds:'Desde el registro de WeChat hasta el contenido diario, desde la presencia en ferias hasta el reenvío de clientes — somos su socio operativo completo.',
+    c1n:'Cuenta Oficial de WeChat',c1b:'Servicio Principal',c1d:'Registramos y operamos una cuenta WeChat dedicada para su destino. 52 artículos premium al año.',
+    c2n:'Representación en Ferias',c2b:'Identidad Exclusiva',c2d:'Asistimos a las principales ferias de viajes chinas exclusivamente bajo su marca. Costo: ¥1,000/persona/día.',
+    c3n:'Reenvío Directo de Clientes',c3b:'Cero Comisión',c3d:'Cada consulta sobre su destino se reenvía directamente a usted. Sin cargos intermediarios.',
+    c4n:'Contenido Chino Premium y Diseño de Itinerarios',c4b:'Localización de Alto Nivel',c4d:'Creamos <strong>itinerarios diseñados para viajeros chinos</strong>. También producimos <strong>documentos premium en chino</strong>.',
+    c5n:'Tranquilidad Total',c5b:'',c5d:'Sin personal que contratar. Sin cargas sociales. Sin costos de viaje. Nuestro equipo bilingüe se encarga de todo.'},
+  hw: {lb:'Proceso de Registro',tl:'Configuración de Cuenta Oficial de WeChat',ds:'Configurar una cuenta WeChat como entidad extranjera es complejo. Gestionamos todo el proceso.',
+    o1l:'Opción 1 · Recomendada',o1t:'Tiene una Empresa Registrada en China',o1d:'Camino más rápido a la verificación completa. Propiedad total bajo su entidad china.',
+    o1s1:'Recopilación de Documentos',o1s1d:'Usted proporciona licencia comercial e identificación del representante legal.',
+    o1s2:'Registro y Verificación',o1s2d:'Completamos el registro de la cuenta y la verificación oficial de WeChat.',
+    o1s3:'Configuración de Permisos',o1s3d:'Configuramos el acceso a la cuenta. La propiedad permanece con su empresa.',
+    o1s4:'Operación Oficial',o1s4d:'Proporcionamos contenido diario, diseño e informes de datos mensuales.',
+    o1s5:'Soporte Continuo',o1s5d:'Revisión regular de contenido, ajuste de funciones y renovación anual de certificación.',
+    o2l:'Opción 2',o2t:'Aún Sin Empresa China',o2d:'Dos caminos disponibles — cuenta de servicio overseas estándar o cuenta personal de lanzamiento rápido.',
+    o2s1:'Estándar: Registrar Cuenta de Servicio Overseas',o2s1d:'Recopilamos los documentos de su empresa extranjera.',
+    o2s2:'Configuración de Permisos',o2s2d:'La cuenta pertenece a su agencia de viajes extranjera.',
+    o2s3:'Temporal: Lanzamiento Rápido con Cuenta Personal',o2s3d:'Registramos una cuenta personal para publicación inmediata de contenido. Tiempo de entrega: 3 días hábiles para registro y aprobación oficial, 1 día hábil para publicación de contenido.',
+    o2s4:'Migración Cuando Esté Listo',o2s4d:'Una vez que establezca su empresa china, migramos todo el contenido a su nueva cuenta corporativa.',
+    note:'<strong style="color:var(--gold);">Nota:</strong> Si ya tiene una cuenta WeChat pero no está satisfecho con su funcionamiento, solo necesita otorgar acceso a nuestro equipo. Cada acción queda registrada con trazabilidad nominal.'},
+  cs: {lb:'Casos de Éxito',tl:'Resultados Probados',ds:'Nuestras cuentas gestionadas funcionan de medio año a tres años. Todo el tráfico es orgánico; muchos artículos alcanzan miles de lecturas y generan pedidos reales.'},
+  pr: {lb:'Planes de Alianza',tl:'Inversión Transparente',ds:'Precios simples y directos, sin cargos ocultos. Nuestros ingresos provienen de la alianza — nunca de sus transacciones con clientes.',
+    roi_t:'Retorno de Inversión',roi_m:'Un año de alianza cuesta menos que <strong style="color: var(--gold);">dos meses de salario</strong> de un empleado local en China. Incluso <strong style="color: var(--gold);">una sola reserva</strong> de una familia de alto nivel cubre su tarifa anual completa.',
+    roi_s:'Cada reserva posterior es ganancia pura. El valor de marca que construye en el mercado chino tiene un valor estratégico que supera la tarifa de alianza.'},
+  cmp: {lb:'Por Qué Seasonmap',tl:'Hacerlo Solo vs. Aliarse con Seasonmap',ds:'Los números hablan por sí solos.',
+    h1:'Entrar a China Solo',h2:'Aliarse con Seasonmap',
+    r1a:'Contratar personal local: ≥ ¥300,000/año',r1b:'Sin empleados — cero costos de personal',
+    r2a:'Cargas sociales, beneficios, cumplimiento',r2b:'Cero cargas sociales o cumplimiento',
+    r3a:'Viajes de fundador/ejecutivo: vuelos + hoteles',r3b:'Sin necesidad de viajar a China',
+    r4a:'Inicio frío: 12-24 meses para construir audiencia',r4b:'Acceso inmediato a nuestra audiencia de alto nivel',
+    r5a:'Solicitudes complejas de ferias',r5b:'Totalmente delegado a Seasonmap',
+    r6a:'Confianza construida lentamente',r6b:'Aproveche la reputación de Seasonmap',
+    r7a:'Múltiples canales diluyen la exposición',r7b:'Un país, un socio — acceso exclusivo',
+    r8a:'Compromiso de socio incierto',r8b:'Un <strong style="color:var(--gold);">socio confiable</strong> — cumplimos lo que prometemos'},
+  tst: {q:'No hacemos negocio de tráfico. Hacemos negocio de confianza.',a:'— Seasonmap, Su Socio de Confianza en China'},
+  cta: {tl:'¿Listo para Entrar al Mercado Chino?',st:'Cada país tiene solo un cupo de alianza. Asegure el suyo antes de que alguien más lo haga.',btn:'Iniciar la Conversación'},
+  ftr: {bd:'SEASONMAP',ds:'Agencia de viajes china autorizada y socio operativo premium. Un país, un socio.',
+    h1:'Servicios',h2:'Empresa',h3:'Contacto',
+    s1:'Gestión WeChat',s2:'Representación Ferias',s3:'Reenvío Clientes',s4:'Localización China',
+    c1:'Sobre Nosotros',c2:'Casos',c3:'Precios',c4:'Contacto',
+    ct1:'WeChat: Elan-zhong',ct2:'Correo: seasonmap@163.com',ct3:'Guangzhou, China',
+    bt:'© 2026 Seasonmap. Todos los derechos reservados.',b2:'Guangzhou International Trade Centre, Tianhe'}
+}};
+
+function gl() { return localStorage.getItem(LK) || 'en'; }
+window.setLang = function(l) { localStorage.setItem(LK, l); applyLang(l); };
+window.getLang = gl;
+window.t = function(k) { var p = k.split('.'), v = T[gl()]; if(!v) v = T.en; for (var i=0; i<p.length; i++) { if (!v) return k; v = v[p[i]]; } return v || k; };
+
+// ── Language Switcher ──
+var LANGS = [
+  { code:'en', native:'English', flag:'🇬🇧' },
+  { code:'fr', native:'Français', flag:'🇫🇷' },
+  { code:'ru', native:'Русский', flag:'🇷🇺' },
+  { code:'ar', native:'العربية', flag:'🇸🇦' },
+  { code:'es', native:'Español', flag:'🇪🇸' }
+];
+
+function buildLangDropdown() {
+  var dd = document.getElementById('langDropdown');
+  if (!dd) return;
+  var cur = gl();
+  var html = '';
+  for (var i = 0; i < LANGS.length; i++) {
+    var l = LANGS[i];
+    html += '<a data-lang="' + l.code + '" onclick="setLang(\'' + l.code + '\');toggleLang()"' +
+      (l.code === cur ? ' class="sel"' : '') + '>' + l.flag + ' ' + l.native + '</a>';
+  }
+  dd.innerHTML = html;
+  var lb = document.querySelector('.lang-btn');
+  if (lb) {
+    for (var j = 0; j < LANGS.length; j++) {
+      if (LANGS[j].code === cur) { lb.innerHTML = '🌐 ' + LANGS[j].code.toUpperCase(); break; }
+    }
+  }
+}
+
+function applyLang(l) {
+  document.documentElement.lang = l;
+  document.documentElement.dir = (l === 'ar') ? 'rtl' : 'ltr';
+  document.querySelectorAll('[data-i18n]').forEach(function(el) { el.textContent = window.t(el.getAttribute('data-i18n')); });
+  document.querySelectorAll('[data-i18n-html]').forEach(function(el) { el.innerHTML = window.t(el.getAttribute('data-i18n-html')); });
+  // Update dropdown selection & button
+  buildLangDropdown();
+  // Re-render dynamic sections
+  if (window._initDone) { renderPricing(); renderCases(); }
+}
+window.applyLang = applyLang;
+
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.lang-switch')) { var d = document.getElementById('langDropdown'); if (d) d.classList.remove('show'); }
+});
+window.toggleLang = function() { document.getElementById('langDropdown').classList.toggle('show'); };
+
+// Init: build dropdown + apply saved language
+buildLangDropdown();
+applyLang(gl());
+window._initDone = true;
+})();
 // ── DATA LOADING ──
 // ═══════════════════════════════════════
 // IndexedDB — image storage
@@ -1705,7 +2224,14 @@ function getDefaultData() {
           'One country, one partner exclusivity'
         ],
         ctaText: 'Get Started',
-        ctaLink: '#contact'
+        ctaLink: '#contact',
+        i18n: {
+          zh: { name:'微信优化版', badge:'适用于已有账号', saving:'适合试水中国市场', features:['优化您现有的微信公众号','每年52篇优质中文文章','专为中国游客量身定制的行程设计','高端中文报价与提案文件','直接线索转发 — 零佣金','一国一代独家合作'], ctaText:'开始使用' },
+          fr: { name:'Optimiseur WeChat', badge:'Pour Comptes Existants', saving:'Idéal pour tester le marché chinois', features:['Optimisez votre compte WeChat Officiel existant','52 articles chinois premium par an','Conception d\'itinéraire adaptée aux voyageurs chinois','Documents de devis et de proposition chinois haut de gamme','Transmission directe de leads — zéro commission','Un pays, un partenaire d\'exclusivité'], ctaText:'Commencer' },
+          ru: { name:'Оптимизатор WeChat', badge:'Для существующих аккаунтов', saving:'Идеально для тестирования рынка Китая', features:['Оптимизируйте свой существующий WeChat Official Account','52 премиальные китайские статьи в год','Дизайн маршрута, адаптированный для китайских путешественников','Высококачественные китайские коммерческие предложения и документы','Прямая передача лидов — нулевая комиссия','Одна страна, один партнер по эксклюзивности'], ctaText:'Начать' },
+          ar: { name:'مُحسّن WeChat', badge:'للحسابات القائمة', saving:'مثالي لاختبار السوق الصيني', features:['تحسين حساب WeChat الرسمي الحالي الخاص بك','52 مقالاً صينياً متميزاً سنوياً','تصميم مسار رحلة مُكيف للمسافرين الصينيين','وثائق عروض أسعار واقتراحات صينية عالية الجودة','إعادة توجيه العملاء المباشر — عمولة صفرية','دولة واحدة، شريك واحد للحصرية'], ctaText:'ابدأ' },
+          es: { name:'Optimizador de WeChat', badge:'Para Cuentas Existentes', saving:'Ideal para probar el mercado chino', features:['Optimice su cuenta actual de WeChat Official','52 artículos chinos premium por año','Diseño de itinerario adaptado para viajeros chinos','Documentos de cotización y propuesta en chino de alta gama','Reenvío directo de leads — comisión cero','Un país, un socio de exclusividad'], ctaText:'Empezar' }
+        }
       },
       {
         id: 2,
@@ -1725,7 +2251,14 @@ function getDefaultData() {
           'Ideal for operators committed to China market'
         ],
         ctaText: 'Choose Premium',
-        ctaLink: '#contact'
+        ctaLink: '#contact',
+        i18n: {
+          zh: { name:'高级版', badge:'最受欢迎', saving:'超值 · ¥15,000/年', features:['全部微信优化服务 × 2年','微信公众号设立与管理','展会代表 × 每年1次','优先资源调度','季度业绩回顾电话','适合致力开拓中国市场的运营商'], ctaText:'选择高级版' },
+          fr: { name:'Premium', badge:'Le Plus Populaire', saving:'Meilleure valeur · ¥15,000/an', features:['Tous les services WeChat Optimizer × 2 ans','Création et gestion du compte WeChat Officiel','Représentation salon professionnel × 1/an','Planification prioritaire des ressources','Appels d\'évaluation trimestriels','Idéal pour les opérateurs engagés sur le marché chinois'], ctaText:'Choisir Premium' },
+          ru: { name:'Премиум', badge:'Самый популярный', saving:'Лучшая цена · ¥15,000/год', features:['Все услуги WeChat Optimizer × 2 года','Настройка и ведение WeChat Official Account','Участие в выставках × 1 раз в год','Приоритетное планирование ресурсов','Ежеквартальные звонки по производительности','Идеально для операторов, committed to China market'], ctaText:'Выбрать Премиум' },
+          ar: { name:'بريميوم', badge:'الأكثر شعبية', saving:'أفضل قيمة · ¥15,000/سنة', features:['جميع خدمات WeChat Optimizer × سنتين','إعداد وإدارة حساب WeChat الرسمي','تمثيل معارض تجارية × 1 سنوياً','جدولة الموارد ذات الأولوية','مكالمات تقييم ربع سنوية','مثالي للمشغلين الملتزمين بسوق الصين'], ctaText:'اختر بريميوم' },
+          es: { name:'Premium', badge:'Más Popular', saving:'Mejor valor · ¥15,000/año', features:['Todos los servicios WeChat Optimizer × 2 años','Configuración y gestión de WeChat Official Account','Representación en ferias × 1 por año','Programación prioritaria de recursos','Llamadas trimestrales de revisión de rendimiento','Ideal para operadores comprometidos con el mercado chino'], ctaText:'Elegir Premium' }
+        }
       },
       {
         id: 3,
@@ -1739,13 +2272,19 @@ function getDefaultData() {
         features: [
           'All Premium services × 2 years',
           '104 articles per year (2× frequency)',
-          'Xiaohongshu (RED) account operation',
           'Trade show representation × 2 per year',
           'Dedicated account manager',
           'Monthly strategy calls & custom reports'
         ],
         ctaText: 'Contact Us',
-        ctaLink: '#contact'
+        ctaLink: '#contact',
+        i18n: {
+          zh: { name:'企业版', badge:'', saving:'增强型合作伙伴', features:['全部高级版服务 × 2年','每年104篇文章（2倍频率）','展会代表 × 每年2次','专属客户经理','月度策略电话与定制报告'], ctaText:'联系我们' },
+          fr: { name:'Entreprise', badge:'', saving:'Partenariat renforcé', features:['Tous les services Premium × 2 ans','104 articles par an (fréquence 2×)','Représentation salon × 2/an','Chargé de compte dédié','Appels stratégie mensuels et rapports personnalisés'], ctaText:'Nous Contacter' },
+          ru: { name:'Корпоративный', badge:'', saving:'Расширенное партнерство', features:['Все услуги Premium × 2 года','104 статьи в год (частота 2×)','Участие в выставках × 2 раза в год','Персональный менеджер аккаунта','Ежемесячные стратегические звонки и отчеты'], ctaText:'Связаться с нами' },
+          ar: { name:'المؤسسي', badge:'', saving:'شراكة معززة', features:['جميع خدمات Premium × سنتين','104 مقال سنوياً (تردد 2×)','تمثيل معارض تجارية × 2 سنوياً','مدير حساب مخصص','مكالمات استراتيجية شهرية وتقارير مخصصة'], ctaText:'اتصل بنا' },
+          es: { name:'Empresarial', badge:'', saving:'Asociación mejorada', features:['Todos los servicios Premium × 2 años','104 artículos por año (frecuencia 2×)','Representación en ferias × 2 por año','Gerente de cuenta dedicado','Llamadas de estrategia mensuales e informes personalizados'], ctaText:'Contáctanos' }
+        }
       },
       {
         id: 4,
@@ -1765,7 +2304,14 @@ function getDefaultData() {
           'Dedicated WeChat Official Account operation'
         ],
         ctaText: 'Talk to Us',
-        ctaLink: '#contact'
+        ctaLink: '#contact',
+        i18n: {
+          zh: { name:'中国全案落地服务', badge:'交钥匙方案', saving:'端到中国市场准入', features:['中国公司注册（全套法律设立）','中国注册营业地址','营业执照及工商备案','会计与记账代理服务','持证国际旅行社资质','专属微信公众号运营'], ctaText:'联系我们' },
+          fr: { name:'Installation Complète en Chine', badge:'Solution Clé en Main', saving:'Entrée sur le marché chinois bout-en-bout', features:['Enregistrement d\'entreprise en Chine (configuration juridique complète)','Adresse commerciale enregistrée en Chine','Licence commerciale et dépôt industriel/commercial','Services de comptabilité et de tenue de livres','Agrément d\'agence de voyages internationale licenciée','Exploitation dédiée du compte WeChat Officiel'], ctaText:'Discuter avec Nous' },
+          ru: { name:'Полный сервис setup в Китае', badge:'Под ключ', saving:'Комплексный выход на рынок Китая', features:['Регистрация компании в Китае (полная юридическая настройка)','Зарегистрированный юридический адрес в Китае','Бизнес-лицензия и промышленная/коммерческая регистрация','Услуги бухгалтерии и ведения книг','Аккредитация лицензированного международного туристического агентства','Посвященная эксплуатация WeChat Official Account'], ctaText:'Связаться с нами' },
+          ar: { name:'الإعداد الشامل في الصين', badge:'حل متكامل', saving:'دخول شامل للسوق الصيني', features:['تسجيل شركة في الصين (إعداد قانوني كامل)','عنوان عمل مسجل في الصين','رخصة تجارية وتسجيل صناعي/تجاري','خدمات المحاسبة والقيود','اعتماد وكالة سفر دولية مرخصة','تشغيل مخصص لحساب WeChat الرسمي'], ctaText:'تحدث معنا' },
+          es: { name:'Configuración Integral China', badge:'Solución Llave en Mano', saving:'Entrada integral al mercado chino', features:['Registro de empresa en China (configuración legal completa)','Dirección comercial registrada en China','Licencia comercial y registro industrial/comercial','Servicios de contabilidad y teneduría de libros','Acreditación de agencia de viajes internacional licenciada','Operación dedicada de WeChat Official Account'], ctaText:'Habla con Nosotros' }
+        }
       }
     ],
     pricingNote: 'WeChat Optimizer is designed for travel operators who already have a WeChat Official Account. Premium & Enterprise include full account setup. Trade show material and travel costs reimbursed at actual cost. All terms subject to formal partnership agreement.',
@@ -1776,7 +2322,14 @@ function getDefaultData() {
         tag: 'Destination Management',
         text: 'Helped a premier Southeast Asian DMC establish their WeChat presence from scratch. Within 12 months, generated 50+ qualified leads and 8 confirmed high-end family bookings. The WeChat account now serves as the go-to Chinese-language resource for their destination.',
         image: '',
-        hidden: false
+        hidden: false,
+        i18n: {
+          zh: { title:'东南亚地接社', tag:'目的地管理', text:'帮助一家顶尖的东南亚地接社从零建立微信影响力。12个月内，产生50+条合格销售线索和8个确认的高端家庭预订。该微信账号现已成为其目的地的中文权威资源。' },
+          fr: { title:'DMC Asie du Sud-Est', tag:'Gestion de Destination', text:'A aidé une DMC d\'Asie du Sud-Est de premier plan à établir sa présence WeChat à partir de zéro. En 12 mois, a généré plus de 50 leads qualifiés et 8 réservations familiales haut de gamme confirmées. Le compte WeChat sert maintenant de ressource de référence en chinois pour leur destination.' },
+          ru: { title:'DMC Юго-Восточной Азии', tag:'Управление направлением', text:'Помогли ведущему DMC Юго-Восточной Азии создать присутствие в WeChat с нуля. За 12 месяцев сгенерировали 50+ квалифицированных лидов и 8 подтвержденных бронирований для VIP-семей. Аккаунт WeChat теперь служит главным китайскоязычным ресурсом для их направления.' },
+          ar: { title:'شركة إدارة وجهات جنوب شرق آسيا', tag:'إدارة الوجهة', text:'ساعدنا شركة إدارة وجهات رائدة في جنوب شرق آسيا على تأسيس حضورها عبر WeChat من الصفر. في غضون 12 شهراً، وفرنا أكثر من 50 عميلاً مؤهلاً و8 حجوزات عائلية مؤكدة من الفئة العالية. يعمل حساب WeChat الآن كمورد صيني مرجعي لوجهتهم.' },
+          es: { title:'DMC del Sudeste Asiático', tag:'Gestión de Destino', text:'Ayudamos a una DMC premier del Sudeste Asiático a establecer su presencia en WeChat desde cero. En 12 meses, generamos más de 50 leads calificados y 8 reservas familiares de alta gama confirmadas. La cuenta de WeChat ahora sirve como el recurso en chino de referencia para su destino.' }
+        }
       },
       {
         id: 2,
@@ -1784,7 +2337,14 @@ function getDefaultData() {
         tag: 'Luxury Travel',
         text: 'Partnered with a European luxury tour operator to create culturally adapted content for the Chinese market. Our localized approach resulted in a 40% inquiry conversion rate, with average booking values exceeding $15,000 USD per family.',
         image: '',
-        hidden: false
+        hidden: false,
+        i18n: {
+          zh: { title:'欧洲奢华旅游运营商', tag:'奢华旅行', text:'与一家欧洲奢华旅游运营商合作，为中国市场创作文化适配内容。我们的本地化方法实现了40%的咨询转化率，平均每个家庭预订价值超过15,000美元。' },
+          fr: { title:'Opérateur de Voyages de Luxe Européen', tag:'Voyage de Luxe', text:'Partenariat avec un opérateur de voyages de luxe européen pour créer un contenu culturellement adapté pour le marché chinois. Notre approche localisée a entraîné un taux de conversion des demandes de 40%, avec des valeurs de réservation moyennes dépassant 15 000 $ USD par famille.' },
+          ru: { title:'Европейский оператор люкс-туров', tag:'Роскошный туризм', text:'Сотрудничали с европейским оператором роскошных туров для создания культурно адаптированного контента для китайского рынка. Наш локализованный подход привел к коэффициенту конверсии запросов 40%, со средней стоимостью бронирования более $15,000 USD на семью.' },
+          ar: { title:'مشغل جولات فاخرة أوروبي', tag:'السفر الفاخر', text:'تشرنا مع مشغل جولات فاخرة أوروبي لإنشاء محتوى مكيف ثقافياً لسوق الصين. أدى نهجنا المترجم إلى معدل تحويل استفسارات 40%، مع متوسط قيم حجز تتجاوز 15,000 دولار أمريكي لكل عائلة.' },
+          es: { title:'Operador de Tours de Lujo Europeo', tag:'Viajes de Lujo', text:'Nos asociamos con un operador de viajes de lujo europeo para crear contenido culturalmente adaptado para el mercado chino. Nuestro enfoque localizado resultó en una tasa de conversión de consultas del 40%, con valores de reserva promedio superiores a $15,000 USD por familia.' }
+        }
       },
       {
         id: 3,
@@ -1792,7 +2352,14 @@ function getDefaultData() {
         tag: 'Adventure Travel',
         text: 'Represented an African safari operator at CITM Shanghai, generating 120+ qualified trade contacts in 3 days. Our follow-up WeChat content strategy converted 15% of these contacts into active booking inquiries within 6 months.',
         image: '',
-        hidden: false
+        hidden: false,
+        i18n: {
+          zh: { title:'非洲 Safari 专家', tag:'探险旅行', text:'在上海国际旅游交易会上代表一家非洲 Safari 运营商，3天内产生120+条合格商业联系。我们后续的微信内容策略在6个月内将这些联系的15%转化为活跃的预订咨询。' },
+          fr: { title:'Spécialiste Safari Africain', tag:'Voyage d\'Aventure', text:'A représenté un opérateur de safari africain lors du CITM Shanghai, générant plus de 120 contacts commerciaux qualifiés en 3 jours. Notre stratégie de contenu WeChat de suivi a converti 15% de ces contacts en demandes de réservation actives dans les 6 mois.' },
+          ru: { title:'Специалист по сафари в Африке', tag:'Приключенческий туризм', text:'Представляли африканского оператора сафари на CITM Shanghai, сгенерировав 120+ квалифицированных деловых контактов за 3 дня. Наша последующая стратегия контента WeChat конвертировала 15% этих контактов в активные запросы на бронирование в течение 6 месяцев.' },
+          ar: { title:'متخصص سفاري أفريقي', tag:'سفر المغامرة', text:'مثلنا مشغل سفاري أفريقي في CITM شنغهاي، مما ولد أكثر من 120 جهة اتصال تجارية مؤهلة في 3 أيام. ساعدت استراتيجية محتوى WeChat اللاحقة على تحويل 15% من هذه جهات الاتصال إلى استفسارات حجز نشطة في غضون 6 أشهر.' },
+          es: { title:'Especialista en Safari Africano', tag:'Viajes de Aventura', text:'Representamos a un operador de safari africano en CITM Shanghái, generando más de 120 contactos comerciales calificados en 3 días. Nuestra estrategia de contenido WeChat de seguimiento convirtió el 15% de estos contactos en consultas activas de reserva en 6 meses.' }
+        }
       },
       {
         id: 4,
@@ -1800,7 +2367,14 @@ function getDefaultData() {
         tag: 'Cultural Tourism',
         text: 'Created a comprehensive WeChat content calendar featuring seasonal Japanese experiences. The account grew to 5,000+ followers in 8 months, with 30% of followers actively engaging with booking inquiries.',
         image: '',
-        hidden: true
+        hidden: true,
+        i18n: {
+          zh: { title:'日本文化体验提供商', tag:'文化旅游', text:'创建了全面的微信内容日历，主打日本季节性体验。该账号在8个月内增长到5000+粉丝，其中30%的粉丝积极参与预订咨询。' },
+          fr: { title:'Fournisseur d\'Expériences Culturelles Japonaises', tag:'Tourisme Culturel', text:'A créé un calendrier de contenu WeChat complet mettant en vedette les expériences japonaises saisonnières. Le compte a atteint plus de 5 000 abonnés en 8 mois, avec 30% des abonnés s\'engageant activement avec des demandes de réservation.' },
+          ru: { title:'Поставщик культурного опыта в Японии', tag:'Культурный туризм', text:'Создали всеобъемлющий календарь контента WeChat, featuring сезонные японские впечатления. Аккаунт вырос до 5,000+ подписчиков за 8 месяцев, при этом 30% подписчиков активно участвуют в запросах на бронирование.' },
+          ar: { title:'مقدم تجارب ثقافية يابانية', tag:'السياحة الثقافية', text:'أنشأنا تقويماً شاملاً لمحتوى WeChat featuring التجارب اليابانية الموسمية. نما الحساب إلى أكثر من 5,000 متابع في 8 أشهر، مع 30% من المتابعين يشاركون بنشاط في استفسارات الحجز.' },
+          es: { title:'Proveedor de Experiencias Culturales Japonesas', tag:'Turismo Cultural', text:'Creamos un calendario de contenido WeChat integral con experiencias japonesas estacionales. La cuenta creció a más de 5,000 seguidores en 8 meses, con el 30% de los seguidores participando activamente en consultas de reserva.' }
+        }
       },
       {
         id: 5,
@@ -1808,7 +2382,14 @@ function getDefaultData() {
         tag: 'Adventure Travel',
         text: 'Launched the first dedicated Chinese-language WeChat account for a South American destination. Within 6 months, established the account as the authoritative voice for Chinese travelers planning South American adventures.',
         image: '',
-        hidden: true
+        hidden: true,
+        i18n: {
+          zh: { title:'南美探险旅行', tag:'探险旅行', text:'为南美目的地推出了首个专门的中文微信账号。在6个月内，将该账号打造成为计划南美探险的中国游客的权威声音。' },
+          fr: { title:'Voyage d\'Aventure en Amérique du Sud', tag:'Voyage d\'Aventure', text:'A lancé le premier compte WeChat dédié en chinois pour une destination d\'Amérique du Sud. En moins de 6 mois, a établi le compte comme la voix autorisée pour les voyageurs chinois planifiant des aventures en Amérique du Sud.' },
+          ru: { title:'Путешествия в Южную Америку', tag:'Приключенческий туризм', text:'Запустили первый специализированный китайскоязычный аккаунт WeChat для южноамериканского направления. В течение 6 месяцев установили аккаунт как авторитетный голос для китайских путешественников, планирующих приключения в Южной Америке.' },
+          ar: { title:'سفر مغامرة أمريكا الجنوبية', tag:'سفر المغامرة', text:'أطلقنا أول حساب WeChat صيني مخصص لوجهة في أمريكا الجنوبية. في غضون 6 أشهر، أسسنا الحساب كصوت مرجعي للمسافرين الصينيين الذين يخططون لمغامرات في أمريكا الجنوبية.' },
+          es: { title:'Viajes de Aventura en Sudamérica', tag:'Viajes de Aventura', text:'Lanzamos la primera cuenta WeChat dedicada en chino para un destino de Sudamérica. En 6 meses, establecimos la cuenta como la voz autorizada para los viajeros chinos que planean aventuras en Sudamérica.' }
+        }
       }
     ]
   };
@@ -1816,14 +2397,37 @@ function getDefaultData() {
 
 function loadData() {
   const stored = localStorage.getItem(DATA_KEY);
+  let data;
   if (stored) {
     try {
-      return JSON.parse(stored);
+      data = JSON.parse(stored);
     } catch(e) {
       console.error('Data parse error, using defaults');
+      data = null;
     }
   }
-  return getDefaultData();
+  if (!data) data = getDefaultData();
+  // PROTECTION: ensure pricing and cases exist (merge defaults if empty/missing)
+  var defaults = getDefaultData();
+  if (!data.pricing || !Array.isArray(data.pricing) || data.pricing.length === 0) {
+    data.pricing = defaults.pricing;
+    console.log('[loadData] Pricing was empty, restored defaults');
+  }
+  if (!data.cases || !Array.isArray(data.cases) || data.cases.length === 0) {
+    data.cases = defaults.cases;
+    console.log('[loadData] Cases were empty, restored defaults');
+  }
+  if (!data.pricingNote) {
+    data.pricingNote = defaults.pricingNote;
+    console.log('[loadData] pricingNote was missing, restored default');
+  }
+  // HARD CAP: max 6 cases — enforce and write back
+  if (data.cases && data.cases.length > 6) {
+    data.cases = data.cases.slice(0, 6);
+    localStorage.setItem(DATA_KEY, JSON.stringify(data));
+    console.log('[loadData] Capped cases to 6');
+  }
+  return data;
 }
 
 function saveData(data) {
@@ -1836,6 +2440,8 @@ if (!localStorage.getItem(DATA_KEY)) {
 }
 
 // ── RENDER ──
+// NOTE: Pricing & Cases render raw data as-is — admin-entered content is NOT translated via i18n.
+// Only static page chrome (nav, section titles, footer) uses the language switcher.
 function renderPricing() {
   const data = loadData();
   const grid = document.getElementById('pricingGrid');
@@ -1849,11 +2455,11 @@ function renderPricing() {
       <div class="pricing-period">${p.period}</div>
       ${p.saving ? `<div class="pricing-saving">${p.saving}</div>` : '<div style="height: 41px;"></div>'}
       <ul class="pricing-features">
-        ${p.features.map(f => `<li>${f}</li>`).join('')}
+        ${(p.features || []).map(f => `<li>${f}</li>`).join('')}
       </ul>
       <a href="${p.ctaLink}" class="pricing-cta">${p.ctaText}</a>
-    </div>
-  `).join('');
+    </div>`
+  ).join('');
 
   note.innerHTML = data.pricingNote;
 }
@@ -1862,8 +2468,10 @@ function renderCases() {
   const data = loadData();
   const grid = document.getElementById('caseGrid');
 
-  const visibleCases = data.cases.filter(c => !c.hidden);
-  const hiddenCases = data.cases.filter(c => c.hidden);
+  // HARD CAP: only first 6, skip ghost cases
+  const allCases = (data.cases || []).slice(0, 6).filter(c => c.title || c.text || c.image);
+  const visibleCases = allCases.filter(c => !c.hidden);
+  const hiddenCases = allCases.filter(c => c.hidden);
 
   function caseCardHTML(c, isHidden) {
     const cardClass = isHidden ? 'case-card case-hidden' : 'case-card';
@@ -1887,7 +2495,6 @@ function renderCases() {
   ].join('');
 
   // Load images from IndexedDB asynchronously
-  const allCases = [...visibleCases, ...hiddenCases];
   allCases.forEach(async c => {
     let img = await _idbGet(c.id);
     // Fallback: legacy localStorage base64

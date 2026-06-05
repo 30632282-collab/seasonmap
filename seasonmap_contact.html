@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Seasonmap · Start the Conversation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Inter:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a1a12;
+    --bg-alt: #0d1f17;
+    --bg-card: #11271d;
+    --bg-card-hover: #163227;
+    --gold: #c8a45c;
+    --gold-light: #d4b76e;
+    --text-primary: #f0ede8;
+    --text-secondary: #a09b95;
+    --text-muted: #6b6560;
+    --border: #2a3a2e;
+    --border-light: #333333;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .serif { font-family: 'Cormorant Garamond', Georgia, serif; }
+
+  /* ── BACKGROUND ── */
+  .bg-overlay {
+    position: fixed;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(10,26,18,0.92) 0%, rgba(10,26,18,0.78) 50%, rgba(10,26,18,0.92) 100%),
+      url('https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?w=1920&q=80') center/cover no-repeat;
+    z-index: 0;
+  }
+
+  /* ── BACK NAV ── */
+  .back-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 24px 40px;
+  }
+  .back-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.3s;
+  }
+  .back-link:hover { color: var(--gold); }
+  .back-arrow { font-size: 18px; line-height: 1; }
+
+  /* ── MAIN CONTENT ── */
+  .main-content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 680px;
+    padding: 100px 40px 60px;
+  }
+
+  /* ── HEADER ── */
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+  }
+
+  .title {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 400;
+    color: var(--text-primary);
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+  .title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .subtitle {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 48px;
+    max-width: 520px;
+  }
+
+  /* ── CONTACT CARDS ── */
+  .contact-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .contact-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px 32px;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    transition: all 0.3s;
+  }
+  .contact-card:hover {
+    background: var(--bg-card-hover);
+    border-color: rgba(200,164,92,0.25);
+  }
+
+  .contact-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(200,164,92,0.1);
+    border: 1px solid rgba(200,164,92,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .contact-info {
+    flex: 1;
+  }
+  .contact-qr {
+    width: 110px;
+    height: 110px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+    background: #fff;
+  }
+
+  .contact-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+
+  .contact-value {
+    font-size: 16px;
+    color: var(--text-primary);
+    font-weight: 400;
+    line-height: 1.6;
+    word-break: break-all;
+  }
+
+  .contact-value a {
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .contact-value a:hover { color: var(--gold); }
+
+  .contact-note {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  /* ── OA QR SECTION ── */
+  .oa-section { margin-top: 48px; text-align: center; }
+  .oa-title {
+    font-size: 13px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 20px;
+  }
+  .oa-grid {
+    display: flex; gap: 40px; justify-content: center; align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .oa-item { text-align: center; }
+  .oa-qr {
+    width: 140px; height: 140px; border-radius: 10px;
+    object-fit: cover; border: 1px solid var(--border); background: #fff;
+    display: block; margin: 0 auto;
+  }
+  .oa-name {
+    font-size: 15px; color: var(--text-primary); margin-top: 10px;
+    font-weight: 500;
+  }
+  .oa-desc {
+    font-size: 12px; color: var(--text-muted); margin-top: 2px;
+  }
+
+  /* ── EXCLUSIVITY BANNER ── */
+  .exclusive-note {
+    background: rgba(200,164,92,0.05);
+    border: 1px solid rgba(200,164,92,0.15);
+    border-radius: 8px;
+    padding: 24px 32px;
+    text-align: center;
+  }
+  .exclusive-note-icon {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+  .exclusive-note-title {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .exclusive-note-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  /* ── FOOTER ── */
+  .page-footer {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .footer-brand {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 16px;
+    letter-spacing: 3px;
+    color: var(--gold);
+  }
+  .footer-copy {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .main-content { padding: 80px 24px 40px; }
+    .back-nav { padding: 16px 24px; }
+    .contact-card { padding: 20px 24px; }
+    .contact-qr { display: none; }
+    .page-footer { flex-direction: column; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-overlay"></div>
+
+<div class="back-nav">
+  <a href="seasonmap_preview.html" class="back-link">
+    <span class="back-arrow">←</span> Back to Home
+  </a>
+</div>
+
+<div class="main-content">
+
+  <div class="section-label">Get in Touch</div>
+  <h1 class="title">Start the <em>Conversation</em></h1>
+  <p class="subtitle">
+    Each country has only one partnership slot. Reach out today to secure exclusive representation for your destination market.
+  </p>
+
+  <div class="contact-grid">
+
+    <!-- Phone -->
+    <div class="contact-card">
+      <div class="contact-icon">📱</div>
+      <div class="contact-info">
+        <div class="contact-label">WeChat & Email</div>
+        <div class="contact-value" style="font-size:14px;margin-top:4px;">
+          WeChat ID: <strong style="color:var(--gold);">Seasonmap09</strong>
+        </div>
+        <div class="contact-value" style="font-size:14px;margin-top:6px;">
+          Email: <a href="mailto:seasonmap@163.com" style="color:var(--gold);"><strong>seasonmap@163.com</strong></a>
+        </div>
+        <div class="contact-value" style="font-size:14px;margin-top:6px;">
+          WeChat ID: <strong style="color:var(--gold);">Elan-zhong</strong>
+        </div>
+        <div class="contact-note">Scan QR code to add on WeChat — or search the ID above</div>
+      </div>
+      <img src="wechat-qr.jpg" alt="WeChat QR Code" class="contact-qr">
+    </div>
+
+    <!-- Email -->
+    <div class="contact-card">
+      <div class="contact-icon">✉️</div>
+      <div class="contact-info">
+        <div class="contact-label">Email</div>
+        <div class="contact-value">
+          <a href="mailto:seasonmap@163.com">seasonmap@163.com</a>
+        </div>
+        <div class="contact-note">For partnership inquiries, proposals, and business collaboration</div>
+      </div>
+    </div>
+
+    <!-- Address -->
+    <div class="contact-card">
+      <div class="contact-icon">📍</div>
+      <div class="contact-info">
+        <div class="contact-label">Office Address</div>
+        <div class="contact-value">
+          8th Floor, Guangdong International Trade Building<br>
+          Tianhe District, Guangzhou, China
+        </div>
+        <div class="contact-note">广州市天河区广东国际贸易大厦8楼</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Follow Our Official Accounts -->
+  <div class="oa-section">
+    <div class="oa-title">Follow Our Official Accounts</div>
+    <div class="oa-grid">
+      <div class="oa-item">
+        <img src="seasonmap-qrcode.jpg" alt="Seasonmap WeChat OA" class="oa-qr">
+        <div class="oa-name">Seasonmap · 季之音</div>
+        <div class="oa-desc">Global luxury travel insights</div>
+      </div>
+      <div class="oa-item">
+        <img src="guguguide-qrcode.jpg" alt="Go&Guide WeChat OA" class="oa-qr">
+        <div class="oa-name">Go&Guide · 咕咕游</div>
+        <div class="oa-desc">Greater China premium tours</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Exclusivity Reminder -->
+  <div class="exclusive-note">
+    <div class="exclusive-note-icon">⚡</div>
+    <div class="exclusive-note-title">One Country, One Partner</div>
+    <div class="exclusive-note-text">
+      We work exclusively with one travel operator per destination country. First come, first served — once your country's slot is taken, we will not partner with any competitor from that market. Secure your position today.
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="footer-brand">SEASONMAP</div>
+    <div class="footer-copy">&copy; 2026 Seasonmap. Your Gateway to China's Travel Market.</div>
+  </div>
+
+</div>
+
+</body>
+</html>
